@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services Financiers - Pay Fusion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        /* === VARIABLES CSS === */
+        :root {
+            /* Couleurs professionnelles */
+            --blue-primary: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-very-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-medium: #94a3b8;
+            --gray-dark: #334155;
+            --green-success: #10b981;
+            --red-error: #ef4444;
+            --orange-gaming: #f97316;
+            --purple-streaming: #8b5cf6;
+            
+            /* Typographie */
+            --font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            --text-xs: 0.75rem;   /* 12px */
+            --text-sm: 0.875rem;  /* 14px - PROFESSIONNEL */
+            --text-base: 1rem;    /* 16px */
+            --text-lg: 1.25rem;   /* 20px */
+            --text-xl: 1.5rem;    /* 24px */
+            --text-2xl: 2rem;     /* 32px */
+            --line-height: 1.6;
+            
+            /* Espacements */
+            --space-xs: 0.5rem;   /* 8px */
+            --space-sm: 0.75rem;  /* 12px */
+            --space-md: 1rem;     /* 16px */
+            --space-lg: 1.5rem;   /* 24px */
+            --space-xl: 2rem;     /* 32px */
+            --space-2xl: 4rem;    /* 64px */
+            
+            /* Bordures et ombres */
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        
+        /* === RESET ET STYLES DE BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--text-sm);
+            line-height: var(--line-height);
+            color: var(--gray-dark);
+            background-color: var(--gray-very-light);
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* === LAYOUT PRINCIPAL === */
+        .dashboard-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 250px;
+            background-color: var(--white);
+            border-right: 1px solid var(--gray-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+                position: relative;
+            }
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .sidebar-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+        }
+        
+        .logo-text {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--blue-primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text span {
+            color: var(--orange-gaming);
+        }
+        
+        .user-info {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--gray-light);
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--blue-very-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            color: var(--blue-primary);
+            font-size: var(--text-xl);
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: var(--text-base);
+            margin-bottom: 2px;
+        }
+        
+        .user-email {
+            color: var(--gray-medium);
+            font-size: var(--text-xs);
+            word-break: break-all;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: var(--space-lg) 0;
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .section-title {
+            padding: 0 var(--space-lg) var(--space-sm);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 2px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm) var(--space-lg);
+            text-decoration: none;
+            color: var(--gray-dark);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            background-color: var(--gray-very-light);
+            color: var(--blue-primary);
+        }
+        
+        .nav-link.active {
+            background-color: var(--blue-very-light);
+            color: var(--blue-primary);
+            border-right: 3px solid var(--blue-primary);
+        }
+        
+        .nav-icon {
+            width: 20px;
+            margin-right: var(--space-sm);
+            text-align: center;
+            font-size: var(--text-base);
+        }
+        
+        .nav-text {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .nav-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--gray-dark);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link.active .nav-checkbox {
+            background-color: var(--blue-primary);
+            border-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .sidebar-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        /* === MAIN CONTENT === */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+        }
+        
+        /* === HEADER === */
+        .main-header {
+            background-color: var(--white);
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: var(--text-lg);
+            color: var(--gray-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+        }
+        
+        @media (min-width: 768px) {
+            .menu-toggle {
+                display: none;
+            }
+        }
+        
+        .menu-toggle:hover {
+            background-color: var(--gray-very-light);
+        }
+        
+        .page-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-dark);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .user-menu {
+            position: relative;
+        }
+        
+        .user-menu-button {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s ease;
+        }
+        
+        .user-menu-button:hover {
+            background-color: var(--gray-very-light);
+        }
+        
+        .user-menu-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--blue-very-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-primary);
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+        
+        /* === CONTENU PRINCIPAL === */
+        .content-wrapper {
+            flex: 1;
+            padding: var(--space-lg);
+            overflow-y: auto;
+        }
+        
+        /* === EN-TÊTE SERVICES === */
+        .services-header {
+            background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-light) 100%);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            color: var(--white);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .services-title {
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+        }
+        
+        .services-subtitle {
+            opacity: 0.9;
+            margin-bottom: var(--space-lg);
+        }
+        
+        /* === SECTION CHOIX SERVICE === */
+        .service-selection-section {
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .section-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-dark);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .service-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+        
+        @media (min-width: 768px) {
+            .service-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .service-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--gray-light);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--blue-light);
+        }
+        
+        .service-card.selected {
+            border-color: var(--blue-primary);
+            background-color: var(--blue-very-light);
+        }
+        
+        .service-logo {
+            height: 60px;
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .service-logo img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        
+        .service-name {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+            color: var(--gray-dark);
+        }
+        
+        .service-description {
+            color: var(--gray-medium);
+            margin-bottom: var(--space-md);
+            font-size: var(--text-sm);
+        }
+        
+        .service-features {
+            list-style: none;
+            text-align: left;
+            margin-top: var(--space-md);
+        }
+        
+        .service-features li {
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkmark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--green-success);
+            border-radius: 3px;
+            margin-right: var(--space-sm);
+            flex-shrink: 0;
+        }
+        
+        .checkmark.checked {
+            background-color: var(--green-success);
+            color: var(--white);
+        }
+        
+        /* === SECTION SÉLECTION MONTANT === */
+        .amount-selection-section {
+            margin-bottom: var(--space-2xl);
+            display: none;
+        }
+        
+        .amount-selection-section.active {
+            display: block;
+        }
+        
+        .amount-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+        
+        @media (min-width: 640px) {
+            .amount-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        
+        .amount-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-sm);
+            border: 2px solid var(--gray-light);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .amount-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .amount-card.selected {
+            border-color: var(--blue-primary);
+            background-color: var(--blue-very-light);
+        }
+        
+        .amount-usd {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--gray-dark);
+            margin-bottom: 4px;
+        }
+        
+        .amount-htg {
+            font-size: var(--text-sm);
+            color: var(--gray-medium);
+        }
+        
+        /* === SECTION CALCUL === */
+        .calculation-section {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-light);
+            margin-bottom: var(--space-xl);
+            display: none;
+        }
+        
+        .calculation-section.active {
+            display: block;
+        }
+        
+        .calculation-header {
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .calculation-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-dark);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .exchange-rate {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            background-color: var(--gray-very-light);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--space-md);
+        }
+        
+        .rate-label {
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+        
+        .rate-value {
+            font-weight: 700;
+            color: var(--blue-primary);
+        }
+        
+        .calculation-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        @media (min-width: 640px) {
+            .calculation-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .calculation-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px dashed var(--gray-light);
+        }
+        
+        .row-label {
+            color: var(--gray-medium);
+        }
+        
+        .row-value {
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-md) 0;
+            border-top: 2px solid var(--gray-light);
+            margin-top: var(--space-md);
+            font-size: var(--text-lg);
+        }
+        
+        .total-label {
+            font-weight: 700;
+            color: var(--gray-dark);
+        }
+        
+        .total-value {
+            font-weight: 700;
+            color: var(--blue-primary);
+        }
+        
+        /* === SECTION FORMULAIRE === */
+        .form-section {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-light);
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .form-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-dark);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .service-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--gray-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .required {
+            color: var(--red-error);
+        }
+        
+        .form-input {
+            padding: var(--space-md);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+            font-size: var(--text-sm);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--blue-primary);
+            box-shadow: 0 0 0 3px var(--blue-very-light);
+        }
+        
+        .form-input.error {
+            border-color: var(--red-error);
+        }
+        
+        .form-error {
+            color: var(--red-error);
+            font-size: var(--text-xs);
+            display: none;
+        }
+        
+        .form-error.show {
+            display: block;
+        }
+        
+        .form-hint {
+            font-size: var(--text-xs);
+            color: var(--gray-medium);
+            margin-top: 2px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        /* === BOUTONS === */
+        .btn {
+            display: inline-block;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--text-sm);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--blue-light);
+        }
+        
+        .btn-primary:disabled {
+            background-color: var(--gray-light);
+            cursor: not-allowed;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--blue-primary);
+            border: 1px solid var(--blue-primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--blue-very-light);
+        }
+        
+        .btn-full {
+            width: 100%;
+        }
+        
+        /* === LOADER === */
+        .loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: var(--space-md) 0;
+        }
+        
+        .loader.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--gray-light);
+            border-top-color: var(--blue-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* === MESSAGES === */
+        .message {
+            padding: var(--space-md);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--space-lg);
+            display: none;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .message.show {
+            display: flex;
+        }
+        
+        .message-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--green-success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .message-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--red-error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        /* === FOOTER === */
+        .main-footer {
+            background-color: var(--white);
+            padding: var(--space-md) var(--space-lg);
+            border-top: 1px solid var(--gray-light);
+            text-align: center;
+            color: var(--gray-medium);
+            font-size: var(--text-xs);
+        }
+        
+        /* === OVERLAY MOBILE === */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            display: none;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding: var(--space-md);
+            }
+            
+            .services-header {
+                padding: var(--space-lg);
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- === SIDEBAR === -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo">
+                <div class="logo-text">PAY<span>FUSION</span></div>
+            </a>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">JD</div>
+            <div class="user-name" id="userName">Jean Dupont</div>
+            <div class="user-email" id="userEmail">jean@exemple.com</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="section-title">Accueil</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="home.html" class="nav-link" data-page="home">
+                            <div class="nav-icon"><i class="fas fa-home"></i></div>
+                            <div class="nav-text">Tableau de bord</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">Services</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-page="services">
+                            <div class="nav-icon"><i class="fas fa-wallet"></i></div>
+                            <div class="nav-text">Services financiers</div>
+                            <div class="nav-checkbox">✓</div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="freefire.html" class="nav-link" data-page="freefire">
+                            <div class="nav-icon"><i class="fas fa-gamepad"></i></div>
+                            <div class="nav-text">Free Fire</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="netflix.html" class="nav-link" data-page="netflix">
+                            <div class="nav-icon"><i class="fas fa-tv"></i></div>
+                            <div class="nav-text">Netflix</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="commande.html" class="nav-link" data-page="commande">
+                            <div class="nav-icon"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="nav-text">Mes commandes</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">Compte</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="account.html" class="nav-link" data-page="account">
+                            <div class="nav-icon"><i class="fas fa-user"></i></div>
+                            <div class="nav-text">Mon profil</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link" data-page="settings">
+                            <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                            <div class="nav-text">Paramètres</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">Aide et support</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="support.html" class="nav-link" data-page="support">
+                            <div class="nav-icon"><i class="fas fa-headset"></i></div>
+                            <div class="nav-text">Support</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://wa.me/50939442808" target="_blank" class="nav-link" data-page="whatsapp">
+                            <div class="nav-icon"><i class="fab fa-whatsapp"></i></div>
+                            <div class="nav-text">WhatsApp</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="logout.html" class="btn btn-outline btn-full">
+                <i class="fas fa-sign-out-alt"></i> Se déconnecter
+            </a>
+        </div>
+    </aside>
+    
+    <!-- === MAIN CONTENT === -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Services financiers</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-menu">
+                    <button class="user-menu-button" id="userMenuButton">
+                        <div class="user-menu-avatar" id="userMenuAvatar">JD</div>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Contenu principal -->
+        <div class="content-wrapper">
+            <!-- Messages -->
+            <div class="message message-success" id="successMessage">
+                <i class="fas fa-check-circle"></i>
+                <span id="successText"></span>
+            </div>
+            
+            <div class="message message-error" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+            
+            <!-- En-tête services -->
+            <section class="services-header">
+                <h2 class="services-title">Transfert d'argent international</h2>
+                <p class="services-subtitle">Envoyez et recevez de l'argent avec Wise, PayPal et USDT. Taux fixe: 1 USD = 150 HTG</p>
+            </section>
+            
+            <!-- Étape 1: Choix du service -->
+            <section class="service-selection-section" id="step1Section">
+                <h3 class="section-title">1. Choisissez votre service</h3>
+                <div class="service-cards">
+                    <!-- Wise -->
+                    <div class="service-card" data-service="wise">
+                        <div class="service-logo">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Wise_logo.svg/2560px-Wise_logo.svg.png" alt="Wise Logo">
+                        </div>
+                        <h4 class="service-name">Wise</h4>
+                        <p class="service-description">Transferts internationaux rapides et sécurisés</p>
+                        
+                        <ul class="service-features">
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Frais bas et transparents</span>
+                            </li>
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Transfert en 1-2 jours</span>
+                            </li>
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Support 24/7</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- PayPal -->
+                    <div class="service-card" data-service="paypal">
+                        <div class="service-logo">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/2560px-PayPal.svg.png" alt="PayPal Logo">
+                        </div>
+                        <h4 class="service-name">PayPal</h4>
+                        <p class="service-description">Paiements en ligne sécurisés dans le monde entier</p>
+                        
+                        <ul class="service-features">
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Protection de l'acheteur</span>
+                            </li>
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Transfert instantané</span>
+                            </li>
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Accepté mondialement</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- USDT -->
+                    <div class="service-card" data-service="usdt">
+                        <div class="service-logo">
+                            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT Logo">
+                        </div>
+                        <h4 class="service-name">USDT</h4>
+                        <p class="service-description">Stablecoin indexé sur le dollar américain</p>
+                        
+                        <ul class="service-features">
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Transactions blockchain</span>
+                            </li>
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Frais minimes</span>
+                            </li>
+                            <li>
+                                <span class="checkmark checked">✓</span>
+                                <span>Confirmations rapides</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="form-actions mt-3">
+                    <button class="btn btn-primary" id="nextStep1" disabled>
+                        Suivant <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Étape 2: Sélection du montant -->
+            <section class="amount-selection-section" id="step2Section">
+                <h3 class="section-title">2. Sélectionnez le montant en USD</h3>
+                <div class="amount-grid" id="amountGrid">
+                    <!-- Les montants seront générés dynamiquement -->
+                </div>
+                
+                <div class="form-actions mt-3">
+                    <button class="btn btn-outline" id="prevStep2">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </button>
+                    <button class="btn btn-primary" id="nextStep2" disabled>
+                        Suivant <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Étape 3: Calcul et récapitulatif -->
+            <section class="calculation-section" id="step3Section">
+                <div class="calculation-header">
+                    <h3 class="calculation-title">3. Récapitulatif et calcul</h3>
+                </div>
+                
+                <div class="exchange-rate">
+                    <span class="rate-label">Taux de change fixe:</span>
+                    <span class="rate-value">1 USD = 150 HTG</span>
+                </div>
+                
+                <div class="calculation-details">
+                    <div class="calculation-row">
+                        <span class="row-label">Service sélectionné:</span>
+                        <span class="row-value" id="selectedServiceText">Wise</span>
+                    </div>
+                    
+                    <div class="calculation-row">
+                        <span class="row-label">Montant en USD:</span>
+                        <span class="row-value" id="amountUsdText">10 USD</span>
+                    </div>
+                    
+                    <div class="calculation-row">
+                        <span class="row-label">Frais de service:</span>
+                        <span class="row-value" id="serviceFeeText">0.0000 USD</span>
+                    </div>
+                    
+                    <div class="calculation-row">
+                        <span class="row-label">Taux de change:</span>
+                        <span class="row-value">1 USD = 150 HTG</span>
+                    </div>
+                </div>
+                
+                <div class="total-row">
+                    <span class="total-label">Total à payer:</span>
+                    <span class="total-value" id="totalAmountText">1,500 HTG</span>
+                </div>
+                
+                <div class="form-actions mt-3">
+                    <button class="btn btn-outline" id="prevStep3">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </button>
+                    <button class="btn btn-primary" id="nextStep3">
+                        Continuer vers le paiement
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Étape 4: Formulaire de commande -->
+            <section class="form-section" id="step4Section">
+                <h3 class="form-title">4. Informations de commande</h3>
+                
+                <form class="service-form" id="orderForm">
+                    <div class="form-group">
+                        <label for="recipientName" class="form-label">
+                            Nom du destinataire
+                            <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="recipientName" 
+                            class="form-input" 
+                            placeholder="Nom complet du destinataire" 
+                            required
+                        >
+                        <div class="form-error" id="recipientNameError">
+                            Le nom du destinataire est requis
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="recipientEmail" class="form-label">
+                            Email du destinataire
+                            <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="recipientEmail" 
+                            class="form-input" 
+                            placeholder="email@exemple.com" 
+                            required
+                        >
+                        <div class="form-error" id="recipientEmailError">
+                            Veuillez entrer un email valide
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="wiseFields" style="display: none;">
+                        <label for="wiseEmail" class="form-label">
+                            Email Wise du destinataire
+                            <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="wiseEmail" 
+                            class="form-input" 
+                            placeholder="email@exemple.com"
+                        >
+                        <div class="form-hint">
+                            L'email associé au compte Wise du destinataire
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="paypalFields" style="display: none;">
+                        <label for="paypalEmail" class="form-label">
+                            Email PayPal du destinataire
+                            <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="paypalEmail" 
+                            class="form-input" 
+                            placeholder="email@exemple.com"
+                        >
+                        <div class="form-hint">
+                            L'email associé au compte PayPal du destinataire
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="usdtFields" style="display: none;">
+                        <label for="usdtWallet" class="form-label">
+                            Adresse USDT du destinataire
+                            <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="usdtWallet" 
+                            class="form-input" 
+                            placeholder="TJ... (adresse TRC20)"
+                        >
+                        <div class="form-hint">
+                            Adresse USDT TRC20 du destinataire
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="orderNotes" class="form-label">
+                            Notes supplémentaires (optionnel)
+                        </label>
+                        <textarea 
+                            id="orderNotes" 
+                            class="form-input" 
+                            rows="3"
+                            placeholder="Instructions spéciales ou informations supplémentaires..."
+                        ></textarea>
+                    </div>
+                    
+                    <div class="loader" id="orderLoader">
+                        <div class="spinner"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="prevStep4">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitOrder">
+                            <i class="fas fa-shopping-cart"></i> Passer la commande
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="main-footer">
+            <p>Pay Fusion &copy; 2023. Tous droits réservés.</p>
+            <p class="mt-1">WhatsApp: +509 3944 2808 | Email: support.payfusion@gmail.com</p>
+        </footer>
+    </div>
+</body>
+
+<!-- === JAVASCRIPT === -->
+<script src="firebase-config.js"></script>
+<script>
+    // === VARIABLES GLOBALES ===
+    let currentUser = null;
+    let userData = null;
+    let selectedService = null;
+    let selectedAmount = null;
+    
+    // Taux de change fixe
+    const EXCHANGE_RATE = 150; // 1 USD = 150 HTG
+    
+    // Montants disponibles
+    const AMOUNTS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    
+    // === INITIALISATION ===
+    document.addEventListener('DOMContentLoaded', async function() {
+        console.log('Services financiers Pay Fusion chargé');
+        
+        // Vérifier l'authentification
+        await checkAuth();
+        
+        // Initialiser les écouteurs d'événements
+        initEventListeners();
+        
+        // Générer les cartes de montant
+        generateAmountCards();
+    });
+    
+    // === VÉRIFICATION AUTHENTIFICATION ===
+    async function checkAuth() {
+        try {
+            const authState = await PayFusion.checkAuthState();
+            
+            if (!authState.isLoggedIn) {
+                // Rediriger vers la page de connexion
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Sauvegarder les données utilisateur
+            currentUser = authState.user;
+            userData = authState.userData;
+            
+            // Mettre à jour l'interface utilisateur
+            updateUserInfo();
+            
+        } catch (error) {
+            console.error('Erreur de vérification auth:', error);
+            window.location.href = 'login.html';
+        }
+    }
+    
+    // === INITIALISER LES ÉCOUTEURS D'ÉVÉNEMENTS ===
+    function initEventListeners() {
+        // Menu toggle mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+        
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+        
+        // Navigation sidebar
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', handleNavClick);
+        });
+        
+        // Étape 1: Sélection du service
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => {
+            card.addEventListener('click', () => selectService(card));
+        });
+        
+        document.getElementById('nextStep1').addEventListener('click', goToStep2);
+        
+        // Étape 2: Sélection du montant
+        document.getElementById('prevStep2').addEventListener('click', () => goToStep(1));
+        document.getElementById('nextStep2').addEventListener('click', goToStep3);
+        
+        // Étape 3: Calcul
+        document.getElementById('prevStep3').addEventListener('click', () => goToStep(2));
+        document.getElementById('nextStep3').addEventListener('click', goToStep4);
+        
+        // Étape 4: Formulaire
+        document.getElementById('prevStep4').addEventListener('click', () => goToStep(3));
+        document.getElementById('orderForm').addEventListener('submit', handleOrderSubmit);
+        
+        // Validation en temps réel
+        document.getElementById('recipientName').addEventListener('input', validateRecipientName);
+        document.getElementById('recipientEmail').addEventListener('input', validateRecipientEmail);
+    }
+    
+    // === GÉNÉRER LES CARTES DE MONTANT ===
+    function generateAmountCards() {
+        const amountGrid = document.getElementById('amountGrid');
+        amountGrid.innerHTML = '';
+        
+        AMOUNTS.forEach(amount => {
+            const amountInHtg = amount * EXCHANGE_RATE;
+            const formattedHtg = PayFusion.formatAmount(amountInHtg, 'HTG');
+            
+            const card = document.createElement('div');
+            card.className = 'amount-card';
+            card.dataset.amount = amount;
+            card.innerHTML = `
+                <div class="amount-usd">${amount} USD</div>
+                <div class="amount-htg">${formattedHtg}</div>
+            `;
+            
+            card.addEventListener('click', () => selectAmount(card));
+            amountGrid.appendChild(card);
+        });
+    }
+    
+    // === GESTION DES ÉTAPES ===
+    function goToStep(step) {
+        // Masquer toutes les sections
+        document.getElementById('step1Section').style.display = 'none';
+        document.getElementById('step2Section').classList.remove('active');
+        document.getElementById('step3Section').classList.remove('active');
+        document.getElementById('step4Section').classList.remove('active');
+        
+        // Afficher la section demandée
+        switch(step) {
+            case 1:
+                document.getElementById('step1Section').style.display = 'block';
+                break;
+            case 2:
+                document.getElementById('step2Section').classList.add('active');
+                break;
+            case 3:
+                document.getElementById('step3Section').classList.add('active');
+                updateCalculation();
+                break;
+            case 4:
+                document.getElementById('step4Section').classList.add('active');
+                updateFormFields();
+                break;
+        }
+    }
+    
+    // === SÉLECTION DU SERVICE ===
+    function selectService(card) {
+        // Désélectionner toutes les cartes
+        document.querySelectorAll('.service-card').forEach(c => {
+            c.classList.remove('selected');
+        });
+        
+        // Sélectionner la carte cliquée
+        card.classList.add('selected');
+        selectedService = card.dataset.service;
+        
+        // Activer le bouton suivant
+        document.getElementById('nextStep1').disabled = false;
+    }
+    
+    // === PASSER À L'ÉTAPE 2 ===
+    function goToStep2() {
+        if (!selectedService) {
+            showError('Veuillez sélectionner un service');
+            return;
+        }
+        
+        goToStep(2);
+    }
+    
+    // === SÉLECTION DU MONTANT ===
+    function selectAmount(card) {
+        // Désélectionner toutes les cartes
+        document.querySelectorAll('.amount-card').forEach(c => {
+            c.classList.remove('selected');
+        });
+        
+        // Sélectionner la carte cliquée
+        card.classList.add('selected');
+        selectedAmount = parseInt(card.dataset.amount);
+        
+        // Activer le bouton suivant
+        document.getElementById('nextStep2').disabled = false;
+    }
+    
+    // === PASSER À L'ÉTAPE 3 ===
+    function goToStep3() {
+        if (!selectedAmount) {
+            showError('Veuillez sélectionner un montant');
+            return;
+        }
+        
+        goToStep(3);
+    }
+    
+    // === METTRE À JOUR LE CALCUL ===
+    function updateCalculation() {
+        if (!selectedService || !selectedAmount) return;
+        
+        // Calculer le montant en HTG
+        const amountInHtg = selectedAmount * EXCHANGE_RATE;
+        const formattedHtg = PayFusion.formatAmount(amountInHtg, 'HTG');
+        
+        // Mettre à jour les textes
+        document.getElementById('selectedServiceText').textContent = 
+            selectedService.charAt(0).toUpperCase() + selectedService.slice(1);
+        
+        document.getElementById('amountUsdText').textContent = `${selectedAmount} USD`;
+        document.getElementById('totalAmountText').textContent = formattedHtg;
+        
+        // Calculer les frais (simulation)
+        const serviceFee = 0.00; // Aucun frais pour l'instant
+        document.getElementById('serviceFeeText').textContent = `${serviceFee.toFixed(4)} USD`;
+    }
+    
+    // === PASSER À L'ÉTAPE 4 ===
+    function goToStep4() {
+        goToStep(4);
+    }
+    
+    // === METTRE À JOUR LES CHAMPS DU FORMULAIRE ===
+    function updateFormFields() {
+        // Masquer tous les champs spécifiques
+        document.getElementById('wiseFields').style.display = 'none';
+        document.getElementById('paypalFields').style.display = 'none';
+        document.getElementById('usdtFields').style.display = 'none';
+        
+        // Afficher les champs appropriés
+        switch(selectedService) {
+            case 'wise':
+                document.getElementById('wiseFields').style.display = 'block';
+                document.getElementById('wiseEmail').required = true;
+                break;
+            case 'paypal':
+                document.getElementById('paypalFields').style.display = 'block';
+                document.getElementById('paypalEmail').required = true;
+                break;
+            case 'usdt':
+                document.getElementById('usdtFields').style.display = 'block';
+                document.getElementById('usdtWallet').required = true;
+                break;
+        }
+    }
+    
+    // === VALIDATION FORMULAIRE ===
+    function validateRecipientName() {
+        const name = document.getElementById('recipientName').value.trim();
+        const errorElement = document.getElementById('recipientNameError');
+        
+        if (!name) {
+            errorElement.textContent = 'Le nom du destinataire est requis';
+            errorElement.classList.add('show');
+            return false;
+        }
+        
+        if (name.length < 3) {
+            errorElement.textContent = 'Le nom doit contenir au moins 3 caractères';
+            errorElement.classList.add('show');
+            return false;
+        }
+        
+        errorElement.classList.remove('show');
+        return true;
+    }
+    
+    function validateRecipientEmail() {
+        const email = document.getElementById('recipientEmail').value.trim();
+        const errorElement = document.getElementById('recipientEmailError');
+        
+        if (!email) {
+            errorElement.textContent = 'L\'email du destinataire est requis';
+            errorElement.classList.add('show');
+            return false;
+        }
+        
+        if (!PayFusion.validateEmail(email)) {
+            errorElement.textContent = 'Veuillez entrer un email valide';
+            errorElement.classList.add('show');
+            return false;
+        }
+        
+        errorElement.classList.remove('show');
+        return true;
+    }
+    
+    // === SOUMISSION DE LA COMMANDE ===
+    async function handleOrderSubmit(e) {
+        e.preventDefault();
+        
+        // Valider les champs
+        const isNameValid = validateRecipientName();
+        const isEmailValid = validateRecipientEmail();
+        
+        // Valider les champs spécifiques
+        let isSpecificValid = true;
+        
+        switch(selectedService) {
+            case 'wise':
+                const wiseEmail = document.getElementById('wiseEmail').value.trim();
+                if (!wiseEmail || !PayFusion.validateEmail(wiseEmail)) {
+                    showError('Veuillez entrer un email Wise valide');
+                    isSpecificValid = false;
+                }
+                break;
+            case 'paypal':
+                const paypalEmail = document.getElementById('paypalEmail').value.trim();
+                if (!paypalEmail || !PayFusion.validateEmail(paypalEmail)) {
+                    showError('Veuillez entrer un email PayPal valide');
+                    isSpecificValid = false;
+                }
+                break;
+            case 'usdt':
+                const usdtWallet = document.getElementById('usdtWallet').value.trim();
+                if (!usdtWallet || usdtWallet.length < 10) {
+                    showError('Veuillez entrer une adresse USDT valide');
+                    isSpecificValid = false;
+                }
+                break;
+        }
+        
+        if (!isNameValid || !isEmailValid || !isSpecificValid) {
+            showError('Veuillez corriger les erreurs dans le formulaire');
+            return;
+        }
+        
+        // Afficher le loader
+        showLoader('orderLoader', true);
+        disableButton('submitOrder', true, 'Traitement...');
+        
+        try {
+            // Récupérer les données du formulaire
+            const orderData = {
+                service: selectedService,
+                amountUsd: selectedAmount,
+                amountHtg: selectedAmount * EXCHANGE_RATE,
+                recipientName: document.getElementById('recipientName').value.trim(),
+                recipientEmail: document.getElementById('recipientEmail').value.trim(),
+                notes: document.getElementById('orderNotes').value.trim(),
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+            
+            // Ajouter les données spécifiques
+            switch(selectedService) {
+                case 'wise':
+                    orderData.wiseEmail = document.getElementById('wiseEmail').value.trim();
+                    break;
+                case 'paypal':
+                    orderData.paypalEmail = document.getElementById('paypalEmail').value.trim();
+                    break;
+                case 'usdt':
+                    orderData.usdtWallet = document.getElementById('usdtWallet').value.trim();
+                    break;
+            }
+            
+            // Créer la commande dans Firebase
+            const result = await PayFusion.createOrder(currentUser.uid, {
+                type: 'financial_service',
+                serviceType: selectedService,
+                ...orderData
+            });
+            
+            if (result.success) {
+                // Succès
+                showSuccess('Commande créée avec succès ! Redirection vers le paiement...');
+                
+                // Rediriger vers la page de paiement après un délai
+                setTimeout(() => {
+                    window.location.href = `payment.html?orderId=${result.orderId}`;
+                }, 2000);
+            } else {
+                // Échec
+                showError('Erreur lors de la création de la commande: ' + result.error);
+                showLoader('orderLoader', false);
+                disableButton('submitOrder', false, 'Passer la commande');
+            }
+            
+        } catch (error) {
+            console.error('Erreur de soumission:', error);
+            showError('Une erreur est survenue. Veuillez réessayer.');
+            showLoader('orderLoader', false);
+            disableButton('submitOrder', false, 'Passer la commande');
+        }
+    }
+    
+    // === MISE À JOUR INFOS UTILISATEUR ===
+    function updateUserInfo() {
+        if (!userData) return;
+        
+        // Générer les initiales pour l'avatar
+        const initials = getInitials(userData.fullName || currentUser.email);
+        
+        // Mettre à jour les avatars
+        document.getElementById('userAvatar').textContent = initials;
+        document.getElementById('userMenuAvatar').textContent = initials;
+        
+        // Mettre à jour les noms
+        const userNameElement = document.getElementById('userName');
+        
+        if (userData.fullName) {
+            userNameElement.textContent = userData.fullName;
+        } else {
+            userNameElement.textContent = currentUser.email;
+        }
+        
+        // Mettre à jour l'email
+        document.getElementById('userEmail').textContent = currentUser.email;
+    }
+    
+    // === GESTION NAVIGATION SIDEBAR ===
+    function handleNavClick(e) {
+        e.preventDefault();
+        
+        const link = e.currentTarget;
+        const page = link.dataset.page;
+        
+        // Mettre à jour les checkboxes
+        document.querySelectorAll('.nav-checkbox').forEach(cb => {
+            cb.textContent = '';
+        });
+        
+        const checkbox = link.querySelector('.nav-checkbox');
+        if (checkbox) {
+            checkbox.textContent = '✓';
+        }
+        
+        // Fermer le sidebar sur mobile
+        if (window.innerWidth < 768) {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+        
+        // Navigation
+        if (page === 'whatsapp') {
+            // Ouvrir WhatsApp dans un nouvel onglet
+            window.open(link.href, '_blank');
+        } else if (page !== 'services') {
+            // Navigation normale (sauf si on est déjà sur services)
+            window.location.href = `${page}.html`;
+        }
+    }
+    
+    // === FONCTIONS UTILITAIRES ===
+    function getInitials(name) {
+        if (!name) return 'U';
+        
+        return name
+            .split(' ')
+            .map(part => part.charAt(0))
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
+    }
+    
+    function showLoader(loaderId, show) {
+        const loader = document.getElementById(loaderId);
+        if (show) {
+            loader.classList.add('active');
+        } else {
+            loader.classList.remove('active');
+        }
+    }
+    
+    function disableButton(buttonId, disable, text = null) {
+        const button = document.getElementById(buttonId);
+        button.disabled = disable;
+        if (text) {
+            button.innerHTML = text;
+        }
+    }
+    
+    function showSuccess(message) {
+        hideAllMessages();
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        
+        successText.textContent = message;
+        successMessage.classList.add('show');
+        
+        // Masquer après 5 secondes
+        setTimeout(() => {
+            successMessage.classList.remove('show');
+        }, 5000);
+    }
+    
+    function showError(message) {
+        hideAllMessages();
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        
+        errorText.textContent = message;
+        errorMessage.classList.add('show');
+        
+        // Masquer après 5 secondes
+        setTimeout(() => {
+            errorMessage.classList.remove('show');
+        }, 5000);
+    }
+    
+    function hideAllMessages() {
+        document.getElementById('successMessage').classList.remove('show');
+        document.getElementById('errorMessage').classList.remove('show');
+    }
+</script>
+</html>

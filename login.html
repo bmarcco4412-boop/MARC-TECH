@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Pay Fusion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <style>
+        /* === VARIABLES CSS === */
+        :root {
+            /* Couleurs professionnelles */
+            --blue-primary: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-very-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --green-success: #10b981;
+            --red-error: #ef4444;
+            --orange-gaming: #f97316;
+            --purple-streaming: #8b5cf6;
+            
+            /* Typographie */
+            --font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            --text-xs: 0.75rem;   /* 12px */
+            --text-sm: 0.875rem;  /* 14px - PROFESSIONNEL */
+            --text-base: 1rem;    /* 16px */
+            --text-lg: 1.25rem;   /* 20px */
+            --text-xl: 1.5rem;    /* 24px */
+            --text-2xl: 2rem;     /* 32px */
+            --line-height: 1.6;
+            
+            /* Espacements */
+            --space-xs: 0.5rem;   /* 8px */
+            --space-sm: 0.75rem;  /* 12px */
+            --space-md: 1rem;     /* 16px */
+            --space-lg: 1.5rem;   /* 24px */
+            --space-xl: 2rem;     /* 32px */
+            --space-2xl: 4rem;    /* 64px */
+            
+            /* Bordures et ombres */
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        
+        /* === RESET ET STYLES DE BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--text-sm);
+            line-height: var(--line-height);
+            color: var(--gray-dark);
+            background-color: var(--gray-very-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        /* === HEADER SIMPLIFIÉ === */
+        .login-header {
+            padding: var(--space-lg) 0;
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+        }
+        
+        .logo-text {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--blue-primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text span {
+            color: var(--orange-gaming);
+        }
+        
+        /* === MAIN CONTENT === */
+        .login-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xl) 0;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+        }
+        
+        .login-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-light);
+        }
+        
+        .login-header-text {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .login-header-text h1 {
+            font-size: var(--text-xl);
+            color: var(--gray-dark);
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+        }
+        
+        .login-header-text p {
+            color: var(--gray-dark);
+            opacity: 0.7;
+        }
+        
+        /* === FORMULAIRE === */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--gray-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .required {
+            color: var(--red-error);
+        }
+        
+        .form-input {
+            padding: var(--space-md);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+            font-size: var(--text-sm);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--blue-primary);
+            box-shadow: 0 0 0 3px var(--blue-very-light);
+        }
+        
+        .form-input.error {
+            border-color: var(--red-error);
+        }
+        
+        .form-input.success {
+            border-color: var(--green-success);
+        }
+        
+        .form-error {
+            color: var(--red-error);
+            font-size: var(--text-xs);
+            display: none;
+        }
+        
+        .form-error.show {
+            display: block;
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-dark);
+            cursor: pointer;
+            font-size: var(--text-base);
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: calc(-1 * var(--space-sm));
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            cursor: pointer;
+        }
+        
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--gray-dark);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-checkbox.checked {
+            background-color: var(--blue-primary);
+            border-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .remember-text {
+            font-size: var(--text-sm);
+            color: var(--gray-dark);
+            cursor: pointer;
+        }
+        
+        .forgot-password {
+            font-size: var(--text-sm);
+            color: var(--blue-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .forgot-password:hover {
+            color: var(--blue-light);
+            text-decoration: underline;
+        }
+        
+        /* === BOUTONS === */
+        .btn {
+            display: inline-block;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--text-sm);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--blue-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-primary:disabled {
+            background-color: var(--gray-light);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-google {
+            background-color: var(--white);
+            color: var(--gray-dark);
+            border: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-md);
+        }
+        
+        .btn-google:hover {
+            background-color: var(--gray-very-light);
+            border-color: var(--gray-dark);
+        }
+        
+        .btn-google img {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--blue-primary);
+            border: 1px solid var(--blue-primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--blue-very-light);
+        }
+        
+        /* === DIVISEUR === */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: var(--space-lg) 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--gray-light);
+        }
+        
+        .divider-text {
+            padding: 0 var(--space-md);
+            color: var(--gray-dark);
+            opacity: 0.7;
+            font-size: var(--text-sm);
+        }
+        
+        /* === LIENS === */
+        .login-footer {
+            text-align: center;
+            margin-top: var(--space-xl);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        .login-footer p {
+            color: var(--gray-dark);
+            opacity: 0.8;
+        }
+        
+        .login-footer a {
+            color: var(--blue-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .login-footer a:hover {
+            color: var(--blue-light);
+            text-decoration: underline;
+        }
+        
+        /* === MESSAGES === */
+        .message {
+            padding: var(--space-md);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--space-lg);
+            display: none;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .message.show {
+            display: flex;
+        }
+        
+        .message-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--green-success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .message-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--red-error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .message-info {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--blue-light);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        /* === MODAL RÉINITIALISATION === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            width: 90%;
+            max-width: 440px;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .modal-header h3 {
+            font-size: var(--text-lg);
+            color: var(--gray-dark);
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: var(--text-lg);
+            color: var(--gray-dark);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background-color: var(--gray-very-light);
+        }
+        
+        /* === LOADER === */
+        .loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: var(--space-md) 0;
+        }
+        
+        .loader.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--gray-light);
+            border-top-color: var(--blue-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* === FOOTER === */
+        .login-page-footer {
+            background-color: var(--gray-dark);
+            color: var(--white);
+            padding: var(--space-xl) 0;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+        }
+        
+        .copyright {
+            font-size: var(--text-xs);
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: var(--space-lg);
+            }
+            
+            .login-header-text h1 {
+                font-size: var(--text-lg);
+            }
+            
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-md);
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+        }
+        
+        /* === UTILITIES === */
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-1 { margin-top: var(--space-sm); }
+        .mt-2 { margin-top: var(--space-md); }
+        .mt-3 { margin-top: var(--space-lg); }
+        .mt-4 { margin-top: var(--space-xl); }
+        
+        .mb-1 { margin-bottom: var(--space-sm); }
+        .mb-2 { margin-bottom: var(--space-md); }
+        .mb-3 { margin-bottom: var(--space-lg); }
+        .mb-4 { margin-bottom: var(--space-xl); }
+    </style>
+</head>
+<body>
+    <!-- === HEADER === -->
+    <header class="login-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-text">PAY<span>FUSION</span></div>
+            </a>
+        </div>
+    </header>
+
+    <!-- === MAIN CONTENT === -->
+    <main class="login-main">
+        <div class="container">
+            <div class="login-container">
+                <!-- Messages -->
+                <div class="message message-success" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successText"></span>
+                </div>
+                
+                <div class="message message-error" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText"></span>
+                </div>
+                
+                <div class="message message-info" id="infoMessage">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="infoText"></span>
+                </div>
+                
+                <!-- Carte de connexion -->
+                <div class="login-card">
+                    <div class="login-header-text">
+                        <h1>Connectez-vous à votre compte</h1>
+                        <p>Accédez à vos services financiers, gaming et streaming</p>
+                    </div>
+                    
+                    <form class="login-form" id="loginForm">
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                Adresse email
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                class="form-input" 
+                                placeholder="votre@email.com" 
+                                required
+                                autocomplete="email"
+                            >
+                            <div class="form-error" id="emailError">
+                                Veuillez entrer une adresse email valide
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                Mot de passe
+                                <span class="required">*</span>
+                            </label>
+                            <div class="password-toggle">
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    class="form-input" 
+                                    placeholder="Votre mot de passe" 
+                                    required
+                                    autocomplete="current-password"
+                                >
+                                <button type="button" class="toggle-password" id="togglePassword">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-error" id="passwordError">
+                                Le mot de passe doit contenir au moins 6 caractères
+                            </div>
+                        </div>
+                        
+                        <div class="form-options">
+                            <div class="remember-me">
+                                <div class="checkbox-wrapper">
+                                    <div class="custom-checkbox" id="rememberCheckbox">
+                                        <i class="fas fa-check" style="font-size: 12px;"></i>
+                                    </div>
+                                </div>
+                                <span class="remember-text" id="rememberText">Se souvenir de moi</span>
+                            </div>
+                            
+                            <a href="#" class="forgot-password" id="forgotPasswordLink">
+                                Mot de passe oublié ?
+                            </a>
+                        </div>
+                        
+                        <div class="loader" id="loginLoader">
+                            <div class="spinner"></div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" id="loginButton">
+                            Se connecter
+                        </button>
+                        
+                        <div class="divider">
+                            <span class="divider-text">Ou continuer avec</span>
+                        </div>
+                        
+                        <button type="button" class="btn btn-google" id="googleLogin">
+                            <i class="fab fa-google"></i>
+                            <span>Google</span>
+                        </button>
+                    </form>
+                    
+                    <div class="login-footer">
+                        <p>Vous n'avez pas de compte ? <a href="register.html">S'inscrire maintenant</a></p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="index.html" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- === MODAL RÉINITIALISATION MOT DE PASSE === -->
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Réinitialiser le mot de passe</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="resetForm">
+                <div class="form-group">
+                    <label for="resetEmail" class="form-label">
+                        Adresse email
+                        <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="email" 
+                        id="resetEmail" 
+                        class="form-input" 
+                        placeholder="votre@email.com" 
+                        required
+                    >
+                    <div class="form-error" id="resetEmailError">
+                        Veuillez entrer une adresse email valide
+                    </div>
+                </div>
+                
+                <div class="loader" id="resetLoader">
+                    <div class="spinner"></div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary mt-2" id="resetButton">
+                    Envoyer le lien de réinitialisation
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- === FOOTER === -->
+    <footer class="login-page-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="support.html">Support</a>
+                    <a href="terms.html">Conditions d'utilisation</a>
+                    <a href="privacy.html">Politique de confidentialité</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2023 Pay Fusion. Tous droits réservés.</p>
+                    <p>WhatsApp: +509 3944 2808 | Email: support.payfusion@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- === JAVASCRIPT === -->
+    <script src="firebase-config.js"></script>
+    <script>
+        // === INITIALISATION ===
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page de connexion Pay Fusion chargée');
+            
+            // Vérifier si l'utilisateur est déjà connecté
+            checkCurrentUser();
+            
+            // Initialiser les écouteurs d'événements
+            initEventListeners();
+            
+            // Vérifier le paramètre d'URL pour les messages
+            checkUrlParams();
+            
+            // Restaurer l'email sauvegardé
+            restoreSavedEmail();
+        });
+        
+        // === VÉRIFIER L'UTILISATEUR ACTUEL ===
+        async function checkCurrentUser() {
+            try {
+                const authState = await PayFusion.checkAuthState();
+                
+                if (authState.isLoggedIn) {
+                    // Vérifier si c'est l'admin
+                    if (authState.user.email === 'bmarcco4412@gmail.com') {
+                        // Rediriger vers admin.html
+                        window.location.href = 'admin.html';
+                    } else {
+                        // Rediriger vers home.html
+                        window.location.href = 'home.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur de vérification utilisateur:', error);
+            }
+        }
+        
+        // === INITIALISER LES ÉCOUTEURS D'ÉVÉNEMENTS ===
+        function initEventListeners() {
+            // Formulaire de connexion
+            const loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', handleLogin);
+            
+            // Toggle mot de passe
+            const togglePassword = document.getElementById('togglePassword');
+            togglePassword.addEventListener('click', togglePasswordVisibility);
+            
+            // Checkbox "Se souvenir de moi"
+            const rememberCheckbox = document.getElementById('rememberCheckbox');
+            const rememberText = document.getElementById('rememberText');
+            
+            rememberCheckbox.addEventListener('click', toggleRememberMe);
+            rememberText.addEventListener('click', toggleRememberMe);
+            
+            // Lien mot de passe oublié
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            forgotPasswordLink.addEventListener('click', openResetModal);
+            
+            // Bouton Google (pour future implémentation)
+            const googleLogin = document.getElementById('googleLogin');
+            googleLogin.addEventListener('click', handleGoogleLogin);
+            
+            // Modal réinitialisation
+            const closeModal = document.getElementById('closeModal');
+            closeModal.addEventListener('click', closeResetModal);
+            
+            const resetForm = document.getElementById('resetForm');
+            resetForm.addEventListener('submit', handlePasswordReset);
+            
+            // Fermer modal en cliquant à l'extérieur
+            const resetModal = document.getElementById('resetModal');
+            resetModal.addEventListener('click', function(e) {
+                if (e.target === resetModal) {
+                    closeResetModal();
+                }
+            });
+            
+            // Validation en temps réel
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            
+            emailInput.addEventListener('input', validateEmail);
+            passwordInput.addEventListener('input', validatePassword);
+        }
+        
+        // === VALIDATION EN TEMPS RÉEL ===
+        function validateEmail() {
+            const email = document.getElementById('email').value.trim();
+            const emailError = document.getElementById('emailError');
+            
+            if (!email) {
+                emailError.textContent = 'L\'email est requis';
+                emailError.classList.add('show');
+                return false;
+            }
+            
+            if (!PayFusion.validateEmail(email)) {
+                emailError.textContent = 'Veuillez entrer une adresse email valide';
+                emailError.classList.add('show');
+                return false;
+            }
+            
+            emailError.classList.remove('show');
+            return true;
+        }
+        
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const passwordError = document.getElementById('passwordError');
+            
+            if (!password) {
+                passwordError.textContent = 'Le mot de passe est requis';
+                passwordError.classList.add('show');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                passwordError.textContent = 'Le mot de passe doit contenir au moins 6 caractères';
+                passwordError.classList.add('show');
+                return false;
+            }
+            
+            passwordError.classList.remove('show');
+            return true;
+        }
+        
+        // === GESTION DE LA CONNEXION ===
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            // Valider les champs
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            
+            if (!isEmailValid || !isPasswordValid) {
+                showError('Veuillez corriger les erreurs dans le formulaire');
+                return;
+            }
+            
+            // Récupérer les valeurs
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberCheckbox').classList.contains('checked');
+            
+            // Sauvegarder l'email si "Se souvenir de moi" est coché
+            if (rememberMe) {
+                localStorage.setItem('payfusion_remember_email', email);
+            } else {
+                localStorage.removeItem('payfusion_remember_email');
+            }
+            
+            // Afficher le loader
+            showLoader('loginLoader', true);
+            disableButton('loginButton', true);
+            
+            try {
+                // Appeler la fonction de connexion Firebase
+                const result = await PayFusion.loginUser(email, password);
+                
+                if (result.success) {
+                    // Connexion réussie
+                    showSuccess('Connexion réussie ! Redirection...');
+                    
+                    // Vérifier si c'est l'admin
+                    if (email === 'bmarcco4412@gmail.com') {
+                        // Rediriger vers admin.html après un délai
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 1500);
+                    } else {
+                        // Rediriger vers home.html après un délai
+                        setTimeout(() => {
+                            window.location.href = 'home.html';
+                        }, 1500);
+                    }
+                } else {
+                    // Échec de connexion
+                    let errorMessage = 'Échec de la connexion';
+                    
+                    switch (result.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'Aucun compte trouvé avec cet email';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = 'Mot de passe incorrect';
+                            break;
+                        case 'auth/too-many-requests':
+                            errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard';
+                            break;
+                        case 'email-not-verified':
+                            errorMessage = 'Veuillez vérifier votre email avant de vous connecter';
+                            break;
+                        default:
+                            errorMessage = result.error || 'Erreur de connexion';
+                    }
+                    
+                    showError(errorMessage);
+                    showLoader('loginLoader', false);
+                    disableButton('loginButton', false);
+                }
+            } catch (error) {
+                console.error('Erreur de connexion:', error);
+                showError('Une erreur est survenue. Veuillez réessayer.');
+                showLoader('loginLoader', false);
+                disableButton('loginButton', false);
+            }
+        }
+        
+        // === GESTION GOOGLE LOGIN (PLACEHOLDER) ===
+        function handleGoogleLogin() {
+            showInfo('La connexion avec Google sera disponible prochainement');
+        }
+        
+        // === TOGGLE VISIBILITÉ MOT DE PASSE ===
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePassword').querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // === TOGGLE "SE SOUVENIR DE MOI" ===
+        function toggleRememberMe() {
+            const checkbox = document.getElementById('rememberCheckbox');
+            checkbox.classList.toggle('checked');
+        }
+        
+        // === RESTAURER L'EMAIL SAUVEGARDÉ ===
+        function restoreSavedEmail() {
+            const savedEmail = localStorage.getItem('payfusion_remember_email');
+            if (savedEmail) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('rememberCheckbox').classList.add('checked');
+            }
+        }
+        
+        // === MODAL RÉINITIALISATION MOT DE PASSE ===
+        function openResetModal(e) {
+            e.preventDefault();
+            const modal = document.getElementById('resetModal');
+            modal.classList.add('active');
+            
+            // Pré-remplir avec l'email du formulaire si disponible
+            const email = document.getElementById('email').value;
+            if (email) {
+                document.getElementById('resetEmail').value = email;
+            }
+            
+            // Focus sur le champ email
+            document.getElementById('resetEmail').focus();
+        }
+        
+        function closeResetModal() {
+            const modal = document.getElementById('resetModal');
+            modal.classList.remove('active');
+            
+            // Réinitialiser le formulaire
+            document.getElementById('resetForm').reset();
+            document.getElementById('resetEmailError').classList.remove('show');
+        }
+        
+        // === GESTION RÉINITIALISATION MOT DE PASSE ===
+        async function handlePasswordReset(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('resetEmail').value.trim();
+            const emailError = document.getElementById('resetEmailError');
+            
+            // Valider l'email
+            if (!email) {
+                emailError.textContent = 'L\'email est requis';
+                emailError.classList.add('show');
+                return;
+            }
+            
+            if (!PayFusion.validateEmail(email)) {
+                emailError.textContent = 'Veuillez entrer une adresse email valide';
+                emailError.classList.add('show');
+                return;
+            }
+            
+            emailError.classList.remove('show');
+            
+            // Afficher le loader
+            showLoader('resetLoader', true);
+            disableButton('resetButton', true);
+            
+            try {
+                // Appeler la fonction de réinitialisation Firebase
+                const result = await PayFusion.resetPassword(email);
+                
+                if (result.success) {
+                    // Succès
+                    showSuccess('Email de réinitialisation envoyé ! Vérifiez votre boîte de réception.');
+                    
+                    // Fermer le modal après un délai
+                    setTimeout(() => {
+                        closeResetModal();
+                        showLoader('resetLoader', false);
+                        disableButton('resetButton', false);
+                    }, 3000);
+                } else {
+                    // Échec
+                    let errorMessage = 'Échec de l\'envoi de l\'email';
+                    
+                    switch (result.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'Aucun compte trouvé avec cet email';
+                            break;
+                        default:
+                            errorMessage = result.error || 'Erreur d\'envoi';
+                    }
+                    
+                    showError(errorMessage);
+                    showLoader('resetLoader', false);
+                    disableButton('resetButton', false);
+                }
+            } catch (error) {
+                console.error('Erreur de réinitialisation:', error);
+                showError('Une erreur est survenue. Veuillez réessayer.');
+                showLoader('resetLoader', false);
+                disableButton('resetButton', false);
+            }
+        }
+        
+        // === VÉRIFIER LES PARAMÈTRES D'URL ===
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Vérifier les messages de succès
+            if (urlParams.has('registered')) {
+                showSuccess('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+                
+                // Pré-remplir l'email si fourni
+                const email = urlParams.get('email');
+                if (email) {
+                    document.getElementById('email').value = email;
+                }
+                
+                // Nettoyer l'URL
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+            
+            // Vérifier les messages d'erreur
+            if (urlParams.has('error')) {
+                const error = urlParams.get('error');
+                showError(decodeURIComponent(error));
+                
+                // Nettoyer l'URL
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+        
+        // === FONCTIONS UTILITAIRES ===
+        function showLoader(loaderId, show) {
+            const loader = document.getElementById(loaderId);
+            if (show) {
+                loader.classList.add('active');
+            } else {
+                loader.classList.remove('active');
+            }
+        }
+        
+        function disableButton(buttonId, disable) {
+            const button = document.getElementById(buttonId);
+            button.disabled = disable;
+            if (disable) {
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+            } else {
+                button.innerHTML = 'Se connecter';
+            }
+        }
+        
+        function showSuccess(message) {
+            hideAllMessages();
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            
+            successText.textContent = message;
+            successMessage.classList.add('show');
+            
+            // Masquer après 5 secondes
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 5000);
+        }
+        
+        function showError(message) {
+            hideAllMessages();
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            
+            errorText.textContent = message;
+            errorMessage.classList.add('show');
+            
+            // Masquer après 5 secondes
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+        
+        function showInfo(message) {
+            hideAllMessages();
+            const infoMessage = document.getElementById('infoMessage');
+            const infoText = document.getElementById('infoText');
+            
+            infoText.textContent = message;
+            infoMessage.classList.add('show');
+            
+            // Masquer après 5 secondes
+            setTimeout(() => {
+                infoMessage.classList.remove('show');
+            }, 5000);
+        }
+        
+        function hideAllMessages() {
+            document.getElementById('successMessage').classList.remove('show');
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('infoMessage').classList.remove('show');
+        }
+        
+        // === REDIRECTION ADMIN SI IDENTIFIANTS ADMIN SAISIS ===
+        document.getElementById('email').addEventListener('blur', function() {
+            const email = this.value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Vérifier si c'est l'email admin
+            if (email === 'bmarcco4412@gmail.com') {
+                // Optionnel: Afficher un message discret
+                console.log('Accès admin détecté');
+            }
+        });
+    </script>
+</body>
+</html>

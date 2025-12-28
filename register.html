@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Pay Fusion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <style>
+        /* === VARIABLES CSS === */
+        :root {
+            /* Couleurs professionnelles */
+            --blue-primary: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-very-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --green-success: #10b981;
+            --red-error: #ef4444;
+            --orange-gaming: #f97316;
+            --purple-streaming: #8b5cf6;
+            
+            /* Typographie */
+            --font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            --text-xs: 0.75rem;   /* 12px */
+            --text-sm: 0.875rem;  /* 14px - PROFESSIONNEL */
+            --text-base: 1rem;    /* 16px */
+            --text-lg: 1.25rem;   /* 20px */
+            --text-xl: 1.5rem;    /* 24px */
+            --text-2xl: 2rem;     /* 32px */
+            --line-height: 1.6;
+            
+            /* Espacements */
+            --space-xs: 0.5rem;   /* 8px */
+            --space-sm: 0.75rem;  /* 12px */
+            --space-md: 1rem;     /* 16px */
+            --space-lg: 1.5rem;   /* 24px */
+            --space-xl: 2rem;     /* 32px */
+            --space-2xl: 4rem;    /* 64px */
+            
+            /* Bordures et ombres */
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        
+        /* === RESET ET STYLES DE BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--text-sm);
+            line-height: var(--line-height);
+            color: var(--gray-dark);
+            background-color: var(--gray-very-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        /* === HEADER SIMPLIFIÉ === */
+        .register-header {
+            padding: var(--space-lg) 0;
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+        }
+        
+        .logo-text {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--blue-primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text span {
+            color: var(--orange-gaming);
+        }
+        
+        /* === MAIN CONTENT === */
+        .register-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xl) 0;
+        }
+        
+        .register-container {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .register-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-light);
+        }
+        
+        .register-header-text {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .register-header-text h1 {
+            font-size: var(--text-xl);
+            color: var(--gray-dark);
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+        }
+        
+        .register-header-text p {
+            color: var(--gray-dark);
+            opacity: 0.7;
+        }
+        
+        /* === PROGRESSION INSCRIPTION === */
+        .register-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-xl);
+            position: relative;
+        }
+        
+        .register-progress::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--gray-light);
+            z-index: 1;
+        }
+        
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+        
+        .step-circle {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: var(--white);
+            border: 2px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: var(--text-xs);
+            color: var(--gray-dark);
+            margin-bottom: var(--space-xs);
+            transition: all 0.3s ease;
+        }
+        
+        .step-circle.active {
+            background-color: var(--blue-primary);
+            border-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .step-circle.completed {
+            background-color: var(--green-success);
+            border-color: var(--green-success);
+            color: var(--white);
+        }
+        
+        .step-text {
+            font-size: var(--text-xs);
+            color: var(--gray-dark);
+            opacity: 0.7;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .step-text.active {
+            color: var(--blue-primary);
+            opacity: 1;
+            font-weight: 500;
+        }
+        
+        /* === FORMULAIRES D'INSCRIPTION === */
+        .register-form {
+            display: none;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        
+        .register-form.active {
+            display: flex;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--gray-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .required {
+            color: var(--red-error);
+        }
+        
+        .form-input {
+            padding: var(--space-md);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+            font-size: var(--text-sm);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--blue-primary);
+            box-shadow: 0 0 0 3px var(--blue-very-light);
+        }
+        
+        .form-input.error {
+            border-color: var(--red-error);
+        }
+        
+        .form-input.success {
+            border-color: var(--green-success);
+        }
+        
+        .form-error {
+            color: var(--red-error);
+            font-size: var(--text-xs);
+            display: none;
+        }
+        
+        .form-error.show {
+            display: block;
+        }
+        
+        .form-hint {
+            font-size: var(--text-xs);
+            color: var(--gray-dark);
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-dark);
+            cursor: pointer;
+            font-size: var(--text-base);
+        }
+        
+        .password-strength {
+            margin-top: var(--space-xs);
+        }
+        
+        .strength-meter {
+            height: 4px;
+            background-color: var(--gray-light);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--red-error);
+            transition: all 0.3s ease;
+        }
+        
+        .strength-fill.weak {
+            width: 33%;
+            background-color: var(--red-error);
+        }
+        
+        .strength-fill.medium {
+            width: 66%;
+            background-color: #f59e0b;
+        }
+        
+        .strength-fill.strong {
+            width: 100%;
+            background-color: var(--green-success);
+        }
+        
+        .strength-text {
+            font-size: var(--text-xs);
+            color: var(--gray-dark);
+            opacity: 0.7;
+        }
+        
+        /* === CHECKBOX TERMS === */
+        .terms-group {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            margin-top: var(--space-sm);
+        }
+        
+        .terms-checkbox {
+            margin-top: 3px;
+        }
+        
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--gray-dark);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .custom-checkbox.checked {
+            background-color: var(--blue-primary);
+            border-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .terms-text {
+            font-size: var(--text-sm);
+            color: var(--gray-dark);
+            line-height: 1.5;
+        }
+        
+        .terms-text a {
+            color: var(--blue-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .terms-text a:hover {
+            text-decoration: underline;
+        }
+        
+        /* === BOUTONS === */
+        .btn {
+            display: inline-block;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--text-sm);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--blue-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-primary:disabled {
+            background-color: var(--gray-light);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--blue-primary);
+            border: 1px solid var(--blue-primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--blue-very-light);
+        }
+        
+        .btn-full {
+            width: 100%;
+        }
+        
+        .register-buttons {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        /* === LOADER === */
+        .loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: var(--space-md) 0;
+        }
+        
+        .loader.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--gray-light);
+            border-top-color: var(--blue-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* === MESSAGES === */
+        .message {
+            padding: var(--space-md);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--space-lg);
+            display: none;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .message.show {
+            display: flex;
+        }
+        
+        .message-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--green-success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .message-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--red-error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        /* === LIENS === */
+        .register-footer {
+            text-align: center;
+            margin-top: var(--space-xl);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        .register-footer p {
+            color: var(--gray-dark);
+            opacity: 0.8;
+        }
+        
+        .register-footer a {
+            color: var(--blue-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .register-footer a:hover {
+            color: var(--blue-light);
+            text-decoration: underline;
+        }
+        
+        /* === FOOTER === */
+        .register-page-footer {
+            background-color: var(--gray-dark);
+            color: var(--white);
+            padding: var(--space-xl) 0;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+        }
+        
+        .copyright {
+            font-size: var(--text-xs);
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 480px) {
+            .register-card {
+                padding: var(--space-lg);
+            }
+            
+            .register-header-text h1 {
+                font-size: var(--text-lg);
+            }
+            
+            .register-buttons {
+                flex-direction: column;
+            }
+            
+            .step-text {
+                font-size: 10px;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+        }
+        
+        /* === UTILITIES === */
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-1 { margin-top: var(--space-sm); }
+        .mt-2 { margin-top: var(--space-md); }
+        .mt-3 { margin-top: var(--space-lg); }
+        .mt-4 { margin-top: var(--space-xl); }
+        
+        .mb-1 { margin-bottom: var(--space-sm); }
+        .mb-2 { margin-bottom: var(--space-md); }
+        .mb-3 { margin-bottom: var(--space-lg); }
+        .mb-4 { margin-bottom: var(--space-xl); }
+    </style>
+</head>
+<body>
+    <!-- === HEADER === -->
+    <header class="register-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-text">PAY<span>FUSION</span></div>
+            </a>
+        </div>
+    </header>
+
+    <!-- === MAIN CONTENT === -->
+    <main class="register-main">
+        <div class="container">
+            <div class="register-container">
+                <!-- Messages -->
+                <div class="message message-success" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successText"></span>
+                </div>
+                
+                <div class="message message-error" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText"></span>
+                </div>
+                
+                <!-- Carte d'inscription -->
+                <div class="register-card">
+                    <div class="register-header-text">
+                        <h1>Créez votre compte Pay Fusion</h1>
+                        <p>Rejoignez notre plateforme en 3 étapes simples</p>
+                    </div>
+                    
+                    <!-- Progression -->
+                    <div class="register-progress">
+                        <div class="progress-step">
+                            <div class="step-circle active" id="step1Circle">1</div>
+                            <div class="step-text active" id="step1Text">Informations</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle" id="step2Circle">2</div>
+                            <div class="step-text" id="step2Text">Sécurité</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle" id="step3Circle">3</div>
+                            <div class="step-text" id="step3Text">Validation</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Étape 1: Informations personnelles -->
+                    <form class="register-form active" id="step1Form">
+                        <div class="form-group">
+                            <label for="fullName" class="form-label">
+                                Nom complet
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                class="form-input" 
+                                placeholder="Jean Dupont" 
+                                required
+                                autocomplete="name"
+                            >
+                            <div class="form-error" id="fullNameError">
+                                Le nom complet est requis
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                Adresse email
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                class="form-input" 
+                                placeholder="votre@email.com" 
+                                required
+                                autocomplete="email"
+                            >
+                            <div class="form-error" id="emailError">
+                                Veuillez entrer une adresse email valide
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone" class="form-label">
+                                Numéro de téléphone
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                class="form-input" 
+                                placeholder="+509 48 12 3456" 
+                                required
+                                autocomplete="tel"
+                            >
+                            <div class="form-error" id="phoneError">
+                                Veuillez entrer un numéro de téléphone valide
+                            </div>
+                            <div class="form-hint">
+                                Format: +509, 509, ou 0 suivi de 8 chiffres
+                            </div>
+                        </div>
+                        
+                        <div class="register-buttons">
+                            <a href="login.html" class="btn btn-outline">
+                                <i class="fas fa-arrow-left"></i> Retour
+                            </a>
+                            <button type="button" class="btn btn-primary" id="nextStep1">
+                                Suivant <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Étape 2: Mot de passe -->
+                    <form class="register-form" id="step2Form">
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                Mot de passe
+                                <span class="required">*</span>
+                            </label>
+                            <div class="password-toggle">
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    class="form-input" 
+                                    placeholder="Créez un mot de passe sécurisé" 
+                                    required
+                                    autocomplete="new-password"
+                                >
+                                <button type="button" class="toggle-password" id="togglePassword">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-error" id="passwordError">
+                                Le mot de passe doit contenir au moins 8 caractères
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-meter">
+                                    <div class="strength-fill" id="passwordStrength"></div>
+                                </div>
+                                <div class="strength-text" id="passwordStrengthText">
+                                    Force du mot de passe
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">
+                                Confirmer le mot de passe
+                                <span class="required">*</span>
+                            </label>
+                            <div class="password-toggle">
+                                <input 
+                                    type="password" 
+                                    id="confirmPassword" 
+                                    class="form-input" 
+                                    placeholder="Confirmez votre mot de passe" 
+                                    required
+                                    autocomplete="new-password"
+                                >
+                                <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-error" id="confirmPasswordError">
+                                Les mots de passe ne correspondent pas
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="referralCode" class="form-label">
+                                Code de parrainage (optionnel)
+                            </label>
+                            <input 
+                                type="text" 
+                                id="referralCode" 
+                                class="form-input" 
+                                placeholder="Ex: PAYFUSION25"
+                                autocomplete="off"
+                            >
+                            <div class="form-hint">
+                                Si vous avez un code de parrainage, entrez-le ici
+                            </div>
+                        </div>
+                        
+                        <div class="register-buttons">
+                            <button type="button" class="btn btn-outline" id="prevStep2">
+                                <i class="fas fa-arrow-left"></i> Précédent
+                            </button>
+                            <button type="button" class="btn btn-primary" id="nextStep2">
+                                Suivant <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Étape 3: Conditions et finalisation -->
+                    <form class="register-form" id="step3Form">
+                        <div class="terms-group">
+                            <div class="terms-checkbox">
+                                <div class="custom-checkbox" id="termsCheckbox">
+                                    <i class="fas fa-check" style="font-size: 12px;"></i>
+                                </div>
+                            </div>
+                            <div class="terms-text">
+                                <p>
+                                    J'accepte les <a href="terms.html" target="_blank">Conditions d'utilisation</a> 
+                                    et la <a href="privacy.html" target="_blank">Politique de confidentialité</a> 
+                                    de Pay Fusion. Je comprends que mes données seront traitées conformément à ces politiques.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-error" id="termsError" style="margin-top: var(--space-sm);">
+                            Vous devez accepter les conditions d'utilisation
+                        </div>
+                        
+                        <div class="terms-group mt-3">
+                            <div class="terms-checkbox">
+                                <div class="custom-checkbox" id="newsletterCheckbox">
+                                    <i class="fas fa-check" style="font-size: 12px;"></i>
+                                </div>
+                            </div>
+                            <div class="terms-text">
+                                <p>
+                                    Je souhaite recevoir les offres spéciales, nouveautés et conseils de Pay Fusion 
+                                    par email. Je peux me désinscrire à tout moment.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="loader" id="registerLoader">
+                            <div class="spinner"></div>
+                        </div>
+                        
+                        <div class="register-buttons">
+                            <button type="button" class="btn btn-outline" id="prevStep3">
+                                <i class="fas fa-arrow-left"></i> Précédent
+                            </button>
+                            <button type="button" class="btn btn-primary" id="registerButton">
+                                Créer mon compte
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="register-footer">
+                        <p>Vous avez déjà un compte ? <a href="login.html">Connectez-vous</a></p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="index.html" class="btn btn-outline">
+                        <i class="fas fa-home"></i> Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- === FOOTER === -->
+    <footer class="register-page-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="support.html">Support</a>
+                    <a href="terms.html">Conditions d'utilisation</a>
+                    <a href="privacy.html">Politique de confidentialité</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2023 Pay Fusion. Tous droits réservés.</p>
+                    <p>WhatsApp: +509 3944 2808 | Email: support.payfusion@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- === JAVASCRIPT === -->
+    <script src="firebase-config.js"></script>
+    <script>
+        // === VARIABLES GLOBALES ===
+        let currentStep = 1;
+        let userData = {
+            fullName: '',
+            email: '',
+            phone: '',
+            password: '',
+            referralCode: '',
+            acceptTerms: false,
+            acceptNewsletter: false
+        };
+        
+        // === INITIALISATION ===
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page d\'inscription Pay Fusion chargée');
+            
+            // Initialiser les écouteurs d'événements
+            initEventListeners();
+            
+            // Vérifier si l'utilisateur est déjà connecté
+            checkCurrentUser();
+        });
+        
+        // === VÉRIFIER L'UTILISATEUR ACTUEL ===
+        async function checkCurrentUser() {
+            try {
+                const authState = await PayFusion.checkAuthState();
+                
+                if (authState.isLoggedIn) {
+                    // Rediriger vers la page appropriée
+                    if (authState.user.email === 'bmarcco4412@gmail.com') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'home.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur de vérification utilisateur:', error);
+            }
+        }
+        
+        // === INITIALISER LES ÉCOUTEURS D'ÉVÉNEMENTS ===
+        function initEventListeners() {
+            // Navigation des étapes
+            document.getElementById('nextStep1').addEventListener('click', validateStep1);
+            document.getElementById('prevStep2').addEventListener('click', () => goToStep(1));
+            document.getElementById('nextStep2').addEventListener('click', validateStep2);
+            document.getElementById('prevStep3').addEventListener('click', () => goToStep(2));
+            document.getElementById('registerButton').addEventListener('click', validateStep3);
+            
+            // Toggle mots de passe
+            document.getElementById('togglePassword').addEventListener('click', () => togglePasswordVisibility('password'));
+            document.getElementById('toggleConfirmPassword').addEventListener('click', () => togglePasswordVisibility('confirmPassword'));
+            
+            // Checkboxes
+            document.getElementById('termsCheckbox').addEventListener('click', () => toggleCheckbox('termsCheckbox'));
+            document.getElementById('newsletterCheckbox').addEventListener('click', () => toggleCheckbox('newsletterCheckbox'));
+            
+            // Validation en temps réel
+            document.getElementById('fullName').addEventListener('input', validateFullName);
+            document.getElementById('email').addEventListener('input', validateEmail);
+            document.getElementById('phone').addEventListener('input', validatePhone);
+            document.getElementById('password').addEventListener('input', validatePassword);
+            document.getElementById('confirmPassword').addEventListener('input', validateConfirmPassword);
+            
+            // Sauvegarder les données lors de la saisie
+            document.getElementById('fullName').addEventListener('blur', saveStep1Data);
+            document.getElementById('email').addEventListener('blur', saveStep1Data);
+            document.getElementById('phone').addEventListener('blur', saveStep1Data);
+            document.getElementById('password').addEventListener('blur', saveStep2Data);
+            document.getElementById('confirmPassword').addEventListener('blur', saveStep2Data);
+            document.getElementById('referralCode').addEventListener('blur', saveStep2Data);
+        }
+        
+        // === GESTION DES ÉTAPES ===
+        function goToStep(step) {
+            // Masquer l'étape actuelle
+            document.querySelectorAll('.register-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Afficher la nouvelle étape
+            document.getElementById(`step${step}Form`).classList.add('active');
+            
+            // Mettre à jour la progression
+            updateProgress(step);
+            
+            // Mettre à jour la variable currentStep
+            currentStep = step;
+            
+            // Restaurer les données sauvegardées
+            restoreStepData(step);
+        }
+        
+        function updateProgress(step) {
+            // Réinitialiser tous les cercles
+            for (let i = 1; i <= 3; i++) {
+                const circle = document.getElementById(`step${i}Circle`);
+                const text = document.getElementById(`step${i}Text`);
+                
+                circle.classList.remove('active', 'completed');
+                text.classList.remove('active');
+            }
+            
+            // Mettre à jour la progression
+            for (let i = 1; i <= step; i++) {
+                const circle = document.getElementById(`step${i}Circle`);
+                const text = document.getElementById(`step${i}Text`);
+                
+                if (i < step) {
+                    circle.classList.add('completed');
+                } else {
+                    circle.classList.add('active');
+                    text.classList.add('active');
+                }
+            }
+        }
+        
+        // === VALIDATION ÉTAPE 1 ===
+        function validateStep1() {
+            const isValidFullName = validateFullName();
+            const isValidEmail = validateEmail();
+            const isValidPhone = validatePhone();
+            
+            if (isValidFullName && isValidEmail && isValidPhone) {
+                // Sauvegarder les données
+                saveStep1Data();
+                
+                // Passer à l'étape 2
+                goToStep(2);
+            } else {
+                showError('Veuillez corriger les erreurs dans le formulaire');
+            }
+        }
+        
+        function validateFullName() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const errorElement = document.getElementById('fullNameError');
+            
+            if (!fullName) {
+                errorElement.textContent = 'Le nom complet est requis';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (fullName.length < 3) {
+                errorElement.textContent = 'Le nom doit contenir au moins 3 caractères';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            errorElement.classList.remove('show');
+            return true;
+        }
+        
+        function validateEmail() {
+            const email = document.getElementById('email').value.trim();
+            const errorElement = document.getElementById('emailError');
+            
+            if (!email) {
+                errorElement.textContent = 'L\'email est requis';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (!PayFusion.validateEmail(email)) {
+                errorElement.textContent = 'Veuillez entrer une adresse email valide';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            // Vérifier si c'est l'email admin
+            if (email === 'bmarcco4412@gmail.com') {
+                errorElement.textContent = 'Cet email est réservé à l\'administration';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            errorElement.classList.remove('show');
+            return true;
+        }
+        
+        function validatePhone() {
+            const phone = document.getElementById('phone').value.trim();
+            const errorElement = document.getElementById('phoneError');
+            
+            if (!phone) {
+                errorElement.textContent = 'Le numéro de téléphone est requis';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            // Nettoyer le numéro pour la validation
+            const cleanedPhone = phone.replace(/\s/g, '');
+            
+            if (!PayFusion.validatePhone(cleanedPhone)) {
+                errorElement.textContent = 'Veuillez entrer un numéro de téléphone haïtien valide';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            errorElement.classList.remove('show');
+            return true;
+        }
+        
+        // === VALIDATION ÉTAPE 2 ===
+        function validateStep2() {
+            const isValidPassword = validatePassword();
+            const isValidConfirmPassword = validateConfirmPassword();
+            
+            if (isValidPassword && isValidConfirmPassword) {
+                // Sauvegarder les données
+                saveStep2Data();
+                
+                // Passer à l'étape 3
+                goToStep(3);
+            } else {
+                showError('Veuillez corriger les erreurs dans le formulaire');
+            }
+        }
+        
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('passwordError');
+            const strengthFill = document.getElementById('passwordStrength');
+            const strengthText = document.getElementById('passwordStrengthText');
+            
+            if (!password) {
+                errorElement.textContent = 'Le mot de passe est requis';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (password.length < 8) {
+                errorElement.textContent = 'Le mot de passe doit contenir au moins 8 caractères';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            // Vérifier la force du mot de passe
+            let strength = 0;
+            let strengthLabel = '';
+            
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            // Mettre à jour l'indicateur de force
+            if (strength <= 1) {
+                strengthFill.className = 'strength-fill weak';
+                strengthText.textContent = 'Faible';
+            } else if (strength <= 2) {
+                strengthFill.className = 'strength-fill medium';
+                strengthText.textContent = 'Moyen';
+            } else {
+                strengthFill.className = 'strength-fill strong';
+                strengthText.textContent = 'Fort';
+            }
+            
+            errorElement.classList.remove('show');
+            return true;
+        }
+        
+        function validateConfirmPassword() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorElement = document.getElementById('confirmPasswordError');
+            
+            if (!confirmPassword) {
+                errorElement.textContent = 'La confirmation du mot de passe est requise';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (password !== confirmPassword) {
+                errorElement.textContent = 'Les mots de passe ne correspondent pas';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            errorElement.classList.remove('show');
+            return true;
+        }
+        
+        // === VALIDATION ÉTAPE 3 ===
+        function validateStep3() {
+            const termsAccepted = document.getElementById('termsCheckbox').classList.contains('checked');
+            const termsError = document.getElementById('termsError');
+            
+            if (!termsAccepted) {
+                termsError.style.display = 'block';
+                showError('Vous devez accepter les conditions d\'utilisation');
+                return;
+            }
+            
+            termsError.style.display = 'none';
+            
+            // Sauvegarder les données des checkboxes
+            userData.acceptTerms = termsAccepted;
+            userData.acceptNewsletter = document.getElementById('newsletterCheckbox').classList.contains('checked');
+            
+            // Inscrire l'utilisateur
+            registerUser();
+        }
+        
+        // === INSCRIPTION UTILISATEUR ===
+        async function registerUser() {
+            // Afficher le loader
+            showLoader('registerLoader', true);
+            disableButton('registerButton', true, 'Inscription en cours...');
+            
+            try {
+                // Appeler la fonction d'inscription Firebase
+                const result = await PayFusion.registerUser(
+                    userData.email,
+                    userData.password,
+                    userData.fullName,
+                    userData.phone
+                );
+                
+                if (result.success) {
+                    // Inscription réussie
+                    showSuccess('Inscription réussie ! Vérifiez votre email pour activer votre compte.');
+                    
+                    // Rediriger vers la page de connexion après un délai
+                    setTimeout(() => {
+                        const redirectUrl = `login.html?registered=true&email=${encodeURIComponent(userData.email)}`;
+                        window.location.href = redirectUrl;
+                    }, 3000);
+                } else {
+                    // Échec de l'inscription
+                    let errorMessage = 'Échec de l\'inscription';
+                    
+                    switch (result.code) {
+                        case 'auth/email-already-in-use':
+                            errorMessage = 'Cet email est déjà utilisé';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Adresse email invalide';
+                            break;
+                        case 'auth/operation-not-allowed':
+                            errorMessage = 'L\'inscription par email/mot de passe n\'est pas activée';
+                            break;
+                        case 'auth/weak-password':
+                            errorMessage = 'Le mot de passe est trop faible';
+                            break;
+                        default:
+                            errorMessage = result.error || 'Erreur d\'inscription';
+                    }
+                    
+                    showError(errorMessage);
+                    showLoader('registerLoader', false);
+                    disableButton('registerButton', false, 'Créer mon compte');
+                }
+            } catch (error) {
+                console.error('Erreur d\'inscription:', error);
+                showError('Une erreur est survenue. Veuillez réessayer.');
+                showLoader('registerLoader', false);
+                disableButton('registerButton', false, 'Créer mon compte');
+            }
+        }
+        
+        // === GESTION DES DONNÉES ===
+        function saveStep1Data() {
+            userData.fullName = document.getElementById('fullName').value.trim();
+            userData.email = document.getElementById('email').value.trim();
+            userData.phone = document.getElementById('phone').value.trim();
+            
+            // Sauvegarder dans localStorage pour persistance
+            localStorage.setItem('payfusion_registration_step1', JSON.stringify({
+                fullName: userData.fullName,
+                email: userData.email,
+                phone: userData.phone
+            }));
+        }
+        
+        function saveStep2Data() {
+            userData.password = document.getElementById('password').value;
+            userData.referralCode = document.getElementById('referralCode').value.trim();
+            
+            // Sauvegarder dans localStorage pour persistance
+            localStorage.setItem('payfusion_registration_step2', JSON.stringify({
+                referralCode: userData.referralCode
+            }));
+        }
+        
+        function restoreStepData(step) {
+            if (step === 1) {
+                const savedData = localStorage.getItem('payfusion_registration_step1');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    document.getElementById('fullName').value = data.fullName || '';
+                    document.getElementById('email').value = data.email || '';
+                    document.getElementById('phone').value = data.phone || '';
+                    
+                    // Mettre à jour userData
+                    userData.fullName = data.fullName || '';
+                    userData.email = data.email || '';
+                    userData.phone = data.phone || '';
+                }
+            } else if (step === 2) {
+                const savedData = localStorage.getItem('payfusion_registration_step2');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    document.getElementById('referralCode').value = data.referralCode || '';
+                    userData.referralCode = data.referralCode || '';
+                }
+                
+                // Restaurer le mot de passe s'il existe
+                if (userData.password) {
+                    document.getElementById('password').value = userData.password;
+                    validatePassword(); // Mettre à jour l'indicateur de force
+                }
+            } else if (step === 3) {
+                // Restaurer les états des checkboxes
+                if (userData.acceptTerms) {
+                    document.getElementById('termsCheckbox').classList.add('checked');
+                }
+                if (userData.acceptNewsletter) {
+                    document.getElementById('newsletterCheckbox').classList.add('checked');
+                }
+            }
+        }
+        
+        // === FONCTIONS UTILITAIRES ===
+        function togglePasswordVisibility(fieldId) {
+            const input = document.getElementById(fieldId);
+            const toggleIcon = document.getElementById(`toggle${fieldId.charAt(0).toUpperCase() + fieldId.slice(1)}`).querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        function toggleCheckbox(checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            checkbox.classList.toggle('checked');
+        }
+        
+        function showLoader(loaderId, show) {
+            const loader = document.getElementById(loaderId);
+            if (show) {
+                loader.classList.add('active');
+            } else {
+                loader.classList.remove('active');
+            }
+        }
+        
+        function disableButton(buttonId, disable, text = null) {
+            const button = document.getElementById(buttonId);
+            button.disabled = disable;
+            if (text) {
+                button.innerHTML = text;
+            }
+        }
+        
+        function showSuccess(message) {
+            hideAllMessages();
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            
+            successText.textContent = message;
+            successMessage.classList.add('show');
+            
+            // Masquer après 5 secondes
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 5000);
+        }
+        
+        function showError(message) {
+            hideAllMessages();
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            
+            errorText.textContent = message;
+            errorMessage.classList.add('show');
+            
+            // Masquer après 5 secondes
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+        
+        function hideAllMessages() {
+            document.getElementById('successMessage').classList.remove('show');
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+        
+        // === NETTOYAGE AU DÉCHARGEMENT ===
+        window.addEventListener('beforeunload', function() {
+            // Ne pas nettager localStorage pour persister les données pendant l'inscription
+            // localStorage.removeItem('payfusion_registration_step1');
+            // localStorage.removeItem('payfusion_registration_step2');
+        });
+    </script>
+</body>
+</html>

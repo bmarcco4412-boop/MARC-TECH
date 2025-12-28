@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - Pay Fusion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        /* === VARIABLES CSS === */
+        :root {
+            /* Couleurs professionnelles */
+            --blue-primary: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-very-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-medium: #94a3b8;
+            --gray-dark: #334155;
+            --green-success: #10b981;
+            --red-error: #ef4444;
+            --orange-gaming: #f97316;
+            --purple-streaming: #8b5cf6;
+            
+            /* Typographie */
+            --font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            --text-xs: 0.75rem;   /* 12px */
+            --text-sm: 0.875rem;  /* 14px - PROFESSIONNEL */
+            --text-base: 1rem;    /* 16px */
+            --text-lg: 1.25rem;   /* 20px */
+            --text-xl: 1.5rem;    /* 24px */
+            --text-2xl: 2rem;     /* 32px */
+            --line-height: 1.6;
+            
+            /* Espacements */
+            --space-xs: 0.5rem;   /* 8px */
+            --space-sm: 0.75rem;  /* 12px */
+            --space-md: 1rem;     /* 16px */
+            --space-lg: 1.5rem;   /* 24px */
+            --space-xl: 2rem;     /* 32px */
+            --space-2xl: 4rem;    /* 64px */
+            
+            /* Bordures et ombres */
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        
+        /* === RESET ET STYLES DE BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--text-sm);
+            line-height: var(--line-height);
+            color: var(--gray-dark);
+            background-color: var(--gray-very-light);
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* === LAYOUT PRINCIPAL === */
+        .dashboard-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 250px;
+            background-color: var(--white);
+            border-right: 1px solid var(--gray-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+                position: relative;
+            }
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .sidebar-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+        }
+        
+        .logo-text {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--blue-primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text span {
+            color: var(--orange-gaming);
+        }
+        
+        .user-info {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--gray-light);
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--blue-very-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            color: var(--blue-primary);
+            font-size: var(--text-xl);
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: var(--text-base);
+            margin-bottom: 2px;
+        }
+        
+        .user-email {
+            color: var(--gray-medium);
+            font-size: var(--text-xs);
+            word-break: break-all;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: var(--space-lg) 0;
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .section-title {
+            padding: 0 var(--space-lg) var(--space-sm);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 2px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm) var(--space-lg);
+            text-decoration: none;
+            color: var(--gray-dark);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            background-color: var(--gray-very-light);
+            color: var(--blue-primary);
+        }
+        
+        .nav-link.active {
+            background-color: var(--blue-very-light);
+            color: var(--blue-primary);
+            border-right: 3px solid var(--blue-primary);
+        }
+        
+        .nav-icon {
+            width: 20px;
+            margin-right: var(--space-sm);
+            text-align: center;
+            font-size: var(--text-base);
+        }
+        
+        .nav-text {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .nav-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--gray-dark);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link.active .nav-checkbox {
+            background-color: var(--blue-primary);
+            border-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .sidebar-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        /* === MAIN CONTENT === */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+        }
+        
+        /* === HEADER === */
+        .main-header {
+            background-color: var(--white);
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: var(--text-lg);
+            color: var(--gray-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+        }
+        
+        @media (min-width: 768px) {
+            .menu-toggle {
+                display: none;
+            }
+        }
+        
+        .menu-toggle:hover {
+            background-color: var(--gray-very-light);
+        }
+        
+        .page-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-dark);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .notification-button {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: var(--text-lg);
+            color: var(--gray-dark);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notification-button:hover {
+            background-color: var(--gray-very-light);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--red-error);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+        }
+        
+        .user-menu {
+            position: relative;
+        }
+        
+        .user-menu-button {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s ease;
+        }
+        
+        .user-menu-button:hover {
+            background-color: var(--gray-very-light);
+        }
+        
+        .user-menu-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--blue-very-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-primary);
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+        
+        .user-menu-name {
+            font-weight: 500;
+            font-size: var(--text-sm);
+            display: none;
+        }
+        
+        @media (min-width: 640px) {
+            .user-menu-name {
+                display: block;
+            }
+        }
+        
+        .dropdown-arrow {
+            font-size: var(--text-xs);
+            color: var(--gray-medium);
+        }
+        
+        .user-menu-dropdown {
+            position: absolute;
+            top: calc(100% + 5px);
+            right: 0;
+            width: 200px;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-light);
+            display: none;
+            z-index: 100;
+        }
+        
+        .user-menu-dropdown.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            text-decoration: none;
+            color: var(--gray-dark);
+            transition: background-color 0.3s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--gray-very-light);
+        }
+        
+        .dropdown-item i {
+            width: 20px;
+            margin-right: var(--space-sm);
+            color: var(--gray-medium);
+        }
+        
+        /* === CONTENU PRINCIPAL === */
+        .content-wrapper {
+            flex: 1;
+            padding: var(--space-lg);
+            overflow-y: auto;
+        }
+        
+        /* === DASHBOARD SECTIONS === */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-light) 100%);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            color: var(--white);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .welcome-title {
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+        }
+        
+        .welcome-text {
+            opacity: 0.9;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        .action-button {
+            padding: var(--space-sm) var(--space-lg);
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--border-radius);
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .action-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* === STATISTIQUES === */
+        .stats-section {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .section-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-dark);
+        }
+        
+        .view-all {
+            color: var(--blue-primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--text-sm);
+        }
+        
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+        
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-light);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .stat-title {
+            font-size: var(--text-sm);
+            color: var(--gray-medium);
+            font-weight: 500;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+        }
+        
+        .stat-card:nth-child(1) .stat-icon {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--blue-primary);
+        }
+        
+        .stat-card:nth-child(2) .stat-icon {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--green-success);
+        }
+        
+        .stat-card:nth-child(3) .stat-icon {
+            background-color: rgba(249, 115, 22, 0.1);
+            color: var(--orange-gaming);
+        }
+        
+        .stat-card:nth-child(4) .stat-icon {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--purple-streaming);
+        }
+        
+        .stat-value {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--gray-dark);
+            margin-bottom: 2px;
+        }
+        
+        .stat-change {
+            font-size: var(--text-xs);
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .stat-change.positive {
+            color: var(--green-success);
+        }
+        
+        .stat-change.negative {
+            color: var(--red-error);
+        }
+        
+        /* === ACTIVITÉ RÉCENTE === */
+        .activity-section {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .activity-list {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-light);
+            overflow: hidden;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--gray-light);
+            transition: background-color 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            background-color: var(--gray-very-light);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-md);
+            font-size: var(--text-base);
+        }
+        
+        .activity-success .activity-icon {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--green-success);
+        }
+        
+        .activity-pending .activity-icon {
+            background-color: rgba(249, 115, 22, 0.1);
+            color: var(--orange-gaming);
+        }
+        
+        .activity-info {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .activity-desc {
+            font-size: var(--text-xs);
+            color: var(--gray-medium);
+        }
+        
+        .activity-time {
+            font-size: var(--text-xs);
+            color: var(--gray-medium);
+        }
+        
+        .no-activity {
+            padding: var(--space-xl);
+            text-align: center;
+            color: var(--gray-medium);
+        }
+        
+        /* === SERVICES RAPIDES === */
+        .services-section {
+            margin-bottom: var(--space-xl);
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+        }
+        
+        @media (min-width: 640px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .services-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .service-quick-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-light);
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .service-quick-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--blue-light);
+        }
+        
+        .service-quick-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            font-size: var(--text-xl);
+        }
+        
+        .service-quick-card:nth-child(1) .service-quick-icon {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--blue-primary);
+        }
+        
+        .service-quick-card:nth-child(2) .service-quick-icon {
+            background-color: rgba(249, 115, 22, 0.1);
+            color: var(--orange-gaming);
+        }
+        
+        .service-quick-card:nth-child(3) .service-quick-icon {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--purple-streaming);
+        }
+        
+        .service-quick-card:nth-child(4) .service-quick-icon {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--green-success);
+        }
+        
+        .service-quick-title {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .service-quick-desc {
+            font-size: var(--text-xs);
+            color: var(--gray-medium);
+        }
+        
+        /* === FOOTER === */
+        .main-footer {
+            background-color: var(--white);
+            padding: var(--space-md) var(--space-lg);
+            border-top: 1px solid var(--gray-light);
+            text-align: center;
+            color: var(--gray-medium);
+            font-size: var(--text-xs);
+        }
+        
+        /* === MODAL ADMIN (CACHÉ) === */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-md);
+        }
+        
+        .admin-modal.active {
+            display: flex;
+        }
+        
+        .admin-modal-content {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: var(--space-xl);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        
+        .admin-modal-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--blue-very-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-lg);
+            color: var(--blue-primary);
+            font-size: var(--text-2xl);
+        }
+        
+        .admin-modal-title {
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-sm);
+            color: var(--gray-dark);
+        }
+        
+        .admin-modal-text {
+            color: var(--gray-medium);
+            margin-bottom: var(--space-lg);
+        }
+        
+        /* === UTILITIES === */
+        .btn {
+            display: inline-block;
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--text-sm);
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--blue-primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--blue-light);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--blue-primary);
+            border: 1px solid var(--blue-primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--blue-very-light);
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-1 { margin-top: var(--space-sm); }
+        .mt-2 { margin-top: var(--space-md); }
+        .mt-3 { margin-top: var(--space-lg); }
+        .mt-4 { margin-top: var(--space-xl); }
+        
+        .mb-1 { margin-bottom: var(--space-sm); }
+        .mb-2 { margin-bottom: var(--space-md); }
+        .mb-3 { margin-bottom: var(--space-lg); }
+        .mb-4 { margin-bottom: var(--space-xl); }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding: var(--space-md);
+            }
+            
+            .welcome-section {
+                padding: var(--space-lg);
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                justify-content: center;
+            }
+        }
+        
+        /* === OVERLAY MOBILE === */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            display: none;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- === SIDEBAR === -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo">
+                <div class="logo-text">PAY<span>FUSION</span></div>
+            </a>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">JD</div>
+            <div class="user-name" id="userName">Jean Dupont</div>
+            <div class="user-email" id="userEmail">jean@exemple.com</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="section-title">Accueil</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-page="home">
+                            <div class="nav-icon"><i class="fas fa-home"></i></div>
+                            <div class="nav-text">Tableau de bord</div>
+                            <div class="nav-checkbox">✓</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">Services</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="services.html" class="nav-link" data-page="services">
+                            <div class="nav-icon"><i class="fas fa-wallet"></i></div>
+                            <div class="nav-text">Services financiers</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="freefire.html" class="nav-link" data-page="freefire">
+                            <div class="nav-icon"><i class="fas fa-gamepad"></i></div>
+                            <div class="nav-text">Free Fire</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="netflix.html" class="nav-link" data-page="netflix">
+                            <div class="nav-icon"><i class="fas fa-tv"></i></div>
+                            <div class="nav-text">Netflix</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="commande.html" class="nav-link" data-page="commande">
+                            <div class="nav-icon"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="nav-text">Mes commandes</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">Compte</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="account.html" class="nav-link" data-page="account">
+                            <div class="nav-icon"><i class="fas fa-user"></i></div>
+                            <div class="nav-text">Mon profil</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link" data-page="settings">
+                            <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                            <div class="nav-text">Paramètres</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="notifications.html" class="nav-link" data-page="notifications">
+                            <div class="nav-icon"><i class="fas fa-bell"></i></div>
+                            <div class="nav-text">Notifications</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="section-title">Aide et support</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="support.html" class="nav-link" data-page="support">
+                            <div class="nav-icon"><i class="fas fa-headset"></i></div>
+                            <div class="nav-text">Support</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://wa.me/50939442808" target="_blank" class="nav-link" data-page="whatsapp">
+                            <div class="nav-icon"><i class="fab fa-whatsapp"></i></div>
+                            <div class="nav-text">WhatsApp</div>
+                            <div class="nav-checkbox"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="logout.html" class="btn btn-outline btn-full">
+                <i class="fas fa-sign-out-alt"></i> Se déconnecter
+            </a>
+        </div>
+    </aside>
+    
+    <!-- === MAIN CONTENT === -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Tableau de bord</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="notification-button" id="notificationButton">
+                        <i class="far fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge"></span>
+                    </button>
+                    
+                    <div class="user-menu">
+                        <button class="user-menu-button" id="userMenuButton">
+                            <div class="user-menu-avatar" id="userMenuAvatar">JD</div>
+                            <span class="user-menu-name" id="userMenuName">Jean Dupont</span>
+                            <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        
+                        <div class="user-menu-dropdown" id="userMenuDropdown">
+                            <a href="account.html" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>Mon profil</span>
+                            </a>
+                            <a href="settings.html" class="dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Paramètres</span>
+                            </a>
+                            <a href="notifications.html" class="dropdown-item">
+                                <i class="fas fa-bell"></i>
+                                <span>Notifications</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="logout.html" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Déconnexion</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Contenu principal -->
+        <div class="content-wrapper">
+            <!-- Section de bienvenue -->
+            <section class="welcome-section">
+                <h2 class="welcome-title" id="welcomeTitle">Bon retour, Jean !</h2>
+                <p class="welcome-text">Gérez vos services financiers, gaming et streaming en un seul endroit.</p>
+                
+                <div class="quick-actions">
+                    <a href="services.html" class="action-button">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Recharger mon solde</span>
+                    </a>
+                    <a href="freefire.html" class="action-button">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Acheter des diamants</span>
+                    </a>
+                    <a href="netflix.html" class="action-button">
+                        <i class="fas fa-tv"></i>
+                        <span>S'abonner à Netflix</span>
+                    </a>
+                </div>
+            </section>
+            
+            <!-- Section statistiques -->
+            <section class="stats-section">
+                <div class="section-header">
+                    <h2 class="section-title">Aperçu rapide</h2>
+                    <a href="#" class="view-all">Voir tout</a>
+                </div>
+                
+                <div class="stats-grid">
+                    <!-- Solde actuel -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Solde actuel</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="currentBalance">0 HTG</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Recharger maintenant</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Commandes aujourd'hui -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Commandes aujourd'hui</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="todayOrders">0</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+0%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Dépenses mensuelles -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Dépenses ce mois</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="monthlySpending">0 HTG</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-0%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Commandes en attente -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">En attente</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="pendingOrders">0</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Suivre</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section activité récente -->
+            <section class="activity-section">
+                <div class="section-header">
+                    <h2 class="section-title">Activité récente</h2>
+                    <a href="commande.html" class="view-all">Voir l'historique</a>
+                </div>
+                
+                <div class="activity-list" id="activityList">
+                    <!-- Les activités seront chargées dynamiquement -->
+                    <div class="no-activity">
+                        <i class="fas fa-history fa-2x mb-2" style="color: var(--gray-light);"></i>
+                        <p>Aucune activité récente</p>
+                        <p class="mt-1" style="font-size: var(--text-xs);">Vos transactions et commandes apparaîtront ici</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section services rapides -->
+            <section class="services-section">
+                <div class="section-header">
+                    <h2 class="section-title">Services rapides</h2>
+                </div>
+                
+                <div class="services-grid">
+                    <a href="services.html" class="service-quick-card">
+                        <div class="service-quick-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="service-quick-title">Transfert d'argent</div>
+                        <div class="service-quick-desc">Wise, PayPal, USDT</div>
+                    </a>
+                    
+                    <a href="freefire.html" class="service-quick-card">
+                        <div class="service-quick-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <div class="service-quick-title">Diamants Free Fire</div>
+                        <div class="service-quick-desc">21 packs disponibles</div>
+                    </a>
+                    
+                    <a href="netflix.html" class="service-quick-card">
+                        <div class="service-quick-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="service-quick-title">Netflix Premium</div>
+                        <div class="service-quick-desc">À partir de 450 HTG</div>
+                    </a>
+                    
+                    <a href="support.html" class="service-quick-card">
+                        <div class="service-quick-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="service-quick-title">Support 24/7</div>
+                        <div class="service-quick-desc">WhatsApp +509 3944 2808</div>
+                    </a>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="main-footer">
+            <p>Pay Fusion &copy; 2023. Tous droits réservés.</p>
+            <p class="mt-1">WhatsApp: +509 3944 2808 | Email: support.payfusion@gmail.com</p>
+        </footer>
+    </div>
+    
+    <!-- === MODAL ADMIN (CACHÉ) === -->
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h3 class="admin-modal-title">Accès administrateur</h3>
+            <p class="admin-modal-text">Vous avez été redirigé vers le tableau de bord administrateur.</p>
+            <div class="admin-modal-buttons">
+                <a href="admin.html" class="btn btn-primary mt-2">
+                    <i class="fas fa-cog"></i> Accéder à l'admin
+                </a>
+                <button class="btn btn-outline mt-2" id="closeAdminModal">
+                    Rester ici
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- === JAVASCRIPT === -->
+<script src="firebase-config.js"></script>
+<script>
+    // === VARIABLES GLOBALES ===
+    let currentUser = null;
+    let userData = null;
+    
+    // === INITIALISATION ===
+    document.addEventListener('DOMContentLoaded', async function() {
+        console.log('Dashboard Pay Fusion chargé');
+        
+        // Vérifier l'authentification
+        await checkAuth();
+        
+        // Initialiser les écouteurs d'événements
+        initEventListeners();
+        
+        // Charger les données du dashboard
+        await loadDashboardData();
+        
+        // Mettre en place les écouteurs temps réel
+        setupRealtimeListeners();
+    });
+    
+    // === VÉRIFICATION AUTHENTIFICATION ===
+    async function checkAuth() {
+        try {
+            const authState = await PayFusion.checkAuthState();
+            
+            if (!authState.isLoggedIn) {
+                // Rediriger vers la page de connexion
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Sauvegarder les données utilisateur
+            currentUser = authState.user;
+            userData = authState.userData;
+            
+            // Mettre à jour l'interface utilisateur
+            updateUserInfo();
+            
+            // Vérifier si c'est l'admin
+            if (currentUser.email === 'bmarcco4412@gmail.com') {
+                // Afficher le modal admin (caché mais accessible)
+                // Pour l'instant, on ne fait rien - l'admin se connecte normalement
+                console.log('Admin connecté - accès normal');
+            }
+            
+        } catch (error) {
+            console.error('Erreur de vérification auth:', error);
+            window.location.href = 'login.html';
+        }
+    }
+    
+    // === INITIALISER LES ÉCOUTEURS D'ÉVÉNEMENTS ===
+    function initEventListeners() {
+        // Menu toggle mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+        
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+        
+        // Menu utilisateur
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenuDropdown = document.getElementById('userMenuDropdown');
+        
+        userMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userMenuDropdown.classList.toggle('show');
+        });
+        
+        // Fermer le menu en cliquant à l'extérieur
+        document.addEventListener('click', () => {
+            userMenuDropdown.classList.remove('show');
+        });
+        
+        // Navigation sidebar
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', handleNavClick);
+        });
+        
+        // Bouton notifications
+        const notificationButton = document.getElementById('notificationButton');
+        notificationButton.addEventListener('click', () => {
+            window.location.href = 'notifications.html';
+        });
+        
+        // Modal admin
+        const closeAdminModal = document.getElementById('closeAdminModal');
+        closeAdminModal.addEventListener('click', () => {
+            document.getElementById('adminModal').classList.remove('active');
+        });
+    }
+    
+    // === GESTION CLIC NAVIGATION ===
+    function handleNavClick(e) {
+        e.preventDefault();
+        
+        const link = e.currentTarget;
+        const page = link.dataset.page;
+        
+        // Mettre à jour les checkboxes
+        document.querySelectorAll('.nav-checkbox').forEach(cb => {
+            cb.textContent = '';
+        });
+        
+        const checkbox = link.querySelector('.nav-checkbox');
+        if (checkbox) {
+            checkbox.textContent = '✓';
+        }
+        
+        // Fermer le sidebar sur mobile
+        if (window.innerWidth < 768) {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+        
+        // Navigation
+        if (page === 'home') {
+            // On est déjà sur home
+            return;
+        } else if (page === 'whatsapp') {
+            // Ouvrir WhatsApp dans un nouvel onglet
+            window.open(link.href, '_blank');
+        } else {
+            // Navigation normale
+            window.location.href = `${page}.html`;
+        }
+    }
+    
+    // === METTRE À JOUR LES INFOS UTILISATEUR ===
+    function updateUserInfo() {
+        if (!userData) return;
+        
+        // Générer les initiales pour l'avatar
+        const initials = getInitials(userData.fullName || currentUser.email);
+        
+        // Mettre à jour les avatars
+        document.getElementById('userAvatar').textContent = initials;
+        document.getElementById('userMenuAvatar').textContent = initials;
+        
+        // Mettre à jour les noms
+        const userNameElement = document.getElementById('userName');
+        const userMenuNameElement = document.getElementById('userMenuName');
+        const welcomeTitle = document.getElementById('welcomeTitle');
+        
+        if (userData.fullName) {
+            userNameElement.textContent = userData.fullName;
+            userMenuNameElement.textContent = userData.fullName;
+            welcomeTitle.textContent = `Bon retour, ${userData.fullName.split(' ')[0]} !`;
+        } else {
+            userNameElement.textContent = currentUser.email;
+            userMenuNameElement.textContent = currentUser.email;
+            welcomeTitle.textContent = `Bon retour !`;
+        }
+        
+        // Mettre à jour l'email
+        document.getElementById('userEmail').textContent = currentUser.email;
+    }
+    
+    // === CHARGER LES DONNÉES DU DASHBOARD ===
+    async function loadDashboardData() {
+        try {
+            // Mettre à jour le solde
+            updateBalance();
+            
+            // Charger les statistiques
+            await loadStatistics();
+            
+            // Charger l'activité récente
+            await loadRecentActivity();
+            
+            // Charger les notifications
+            await loadNotifications();
+            
+        } catch (error) {
+            console.error('Erreur de chargement des données:', error);
+        }
+    }
+    
+    // === METTRE À JOUR LE SOLDE ===
+    function updateBalance() {
+        if (userData && userData.balance !== undefined) {
+            const formattedBalance = PayFusion.formatAmount(userData.balance, 'HTG');
+            document.getElementById('currentBalance').textContent = formattedBalance;
+        }
+    }
+    
+    // === CHARGER LES STATISTIQUES ===
+    async function loadStatistics() {
+        try {
+            // Pour l'instant, on utilise des données simulées
+            // Dans une version réelle, on récupérerait ces données depuis Firestore
+            
+            // Commandes aujourd'hui
+            const today = new Date().toISOString().split('T')[0];
+            // Simuler des données
+            document.getElementById('todayOrders').textContent = '0';
+            document.getElementById('monthlySpending').textContent = '0 HTG';
+            document.getElementById('pendingOrders').textContent = '0';
+            
+        } catch (error) {
+            console.error('Erreur de chargement des statistiques:', error);
+        }
+    }
+    
+    // === CHARGER L'ACTIVITÉ RÉCENTE ===
+    async function loadRecentActivity() {
+        try {
+            const activityList = document.getElementById('activityList');
+            
+            // Vérifier si l'utilisateur a des transactions
+            if (userData && userData.transactions && userData.transactions.length > 0) {
+                // Récupérer les dernières transactions depuis Firestore
+                // Pour l'instant, on affiche un message par défaut
+                activityList.innerHTML = `
+                    <div class="activity-item activity-success">
+                        <div class="activity-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="activity-info">
+                            <div class="activity-title">Bienvenue sur Pay Fusion</div>
+                            <div class="activity-desc">Commencez par recharger votre solde</div>
+                        </div>
+                        <div class="activity-time">Maintenant</div>
+                    </div>
+                `;
+            }
+            // Sinon, le message par défaut reste affiché
+            
+        } catch (error) {
+            console.error('Erreur de chargement de l\'activité:', error);
+        }
+    }
+    
+    // === CHARGER LES NOTIFICATIONS ===
+    async function loadNotifications() {
+        try {
+            if (!currentUser) return;
+            
+            const result = await PayFusion.getUserNotifications(currentUser.uid);
+            
+            if (result.success && result.notifications.length > 0) {
+                const unreadCount = result.notifications.filter(n => !n.read).length;
+                
+                if (unreadCount > 0) {
+                    document.getElementById('notificationBadge').style.display = 'block';
+                } else {
+                    document.getElementById('notificationBadge').style.display = 'none';
+                }
+            } else {
+                document.getElementById('notificationBadge').style.display = 'none';
+            }
+            
+        } catch (error) {
+            console.error('Erreur de chargement des notifications:', error);
+        }
+    }
+    
+    // === ÉCOUTEURS TEMPS RÉEL ===
+    function setupRealtimeListeners() {
+        if (!currentUser) return;
+        
+        // Écouter les changements de données utilisateur
+        const userRef = firebaseDb.collection('users').doc(currentUser.uid);
+        
+        userRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                const updatedData = doc.data();
+                userData = updatedData;
+                
+                // Mettre à jour l'interface
+                updateBalance();
+                
+                // Vérifier si c'est un admin qui vient de se connecter
+                if (updatedData.role === 'admin' || currentUser.email === 'bmarcco4412@gmail.com') {
+                    // L'admin voit l'interface normale, mais peut accéder à admin.html
+                    console.log('Mise à jour admin détectée');
+                }
+            }
+        }, (error) => {
+            console.error('Erreur d\'écoute temps réel:', error);
+        });
+    }
+    
+    // === FONCTIONS UTILITAIRES ===
+    function getInitials(name) {
+        if (!name) return 'U';
+        
+        return name
+            .split(' ')
+            .map(part => part.charAt(0))
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
+    }
+    
+    // === GESTION DÉCONNEXION ===
+    // La déconnexion se fait via logout.html
+</script>
+</html>
