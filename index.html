@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PAY FUSION | Plateforme de Services Financiers & Numériques</title>
+    
+    <!-- Typographie Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons via FontAwesome (Lien externe) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CONFIGURATION DES VARIABLES --- */
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --gray-deep: #1e293b;
+            --success: #10b981;
+            --error: #ef4444;
+            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --text-sm: 0.875rem; /* 14px */
+            --text-base: 1rem;   /* 16px */
+            --text-lg: 1.25rem;  /* 20px */
+            --text-xl: 1.5rem;   /* 24px */
+            --text-2xl: 2rem;    /* 32px */
+        }
+
+        /* --- RESET PROFESSIONNEL --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-main);
+            font-size: var(--text-sm);
+            color: var(--gray-dark);
+            background-color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        .pf-header {
+            height: 72px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+        }
+
+        .pf-header-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .pf-logo {
+            height: 38px;
+            z-index: 10;
+        }
+
+        .pf-logo img {
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .pf-menu-trigger {
+            width: 44px;
+            height: 44px;
+            background: var(--gray-v-light);
+            border: 1px solid var(--gray-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pf-menu-trigger:hover {
+            border-color: var(--blue-prof);
+            background: var(--blue-very-light);
+        }
+
+        /* --- HERO SECTION --- */
+        .pf-hero {
+            padding: 160px 1.5rem 100px;
+            background: radial-gradient(circle at top right, var(--blue-very-light), var(--white));
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pf-hero::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 100%;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .pf-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--blue-very-light);
+            color: var(--blue-prof);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .pf-hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            color: var(--gray-deep);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1.5px;
+        }
+
+        .pf-hero p {
+            font-size: 1.125rem;
+            color: var(--gray-dark);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.85;
+        }
+
+        .pf-cta-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .pf-btn {
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: var(--text-sm);
+        }
+
+        .pf-btn-primary {
+            background: var(--blue-prof);
+            color: var(--white);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+
+        .pf-btn-primary:hover {
+            background: var(--blue-light);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+
+        .pf-btn-outline {
+            background: var(--white);
+            color: var(--gray-dark);
+            border: 1px solid var(--gray-light);
+        }
+
+        .pf-btn-outline:hover {
+            border-color: var(--blue-prof);
+            background: var(--gray-v-light);
+        }
+
+        /* --- SERVICES SECTION --- */
+        .pf-section {
+            padding: 6rem 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pf-section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .pf-section-header h2 {
+            font-size: var(--text-2xl);
+            font-weight: 800;
+            color: var(--gray-deep);
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .pf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .pf-service-card {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 24px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .pf-service-card:hover {
+            border-color: var(--blue-light);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+
+        .pf-icon-box {
+            width: 56px;
+            height: 56px;
+            background: var(--gray-v-light);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--blue-prof);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .pf-service-card:hover .pf-icon-box {
+            background: var(--blue-prof);
+            color: var(--white);
+        }
+
+        .pf-service-card h3 {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gray-deep);
+        }
+
+        .pf-service-card p {
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .pf-feature-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pf-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .pf-check {
+            color: var(--success);
+            font-family: monospace;
+            font-weight: 900;
+        }
+
+        /* --- TESTIMONIALS --- */
+        .pf-bg-gray { background-color: var(--gray-v-light); }
+
+        .pf-testimonial-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--gray-light);
+        }
+
+        .pf-stars {
+            color: #fbbf24;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .pf-testi-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            color: var(--gray-dark);
+            font-size: 0.95rem;
+        }
+
+        .pf-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pf-user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--blue-very-light);
+            color: var(--blue-prof);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* --- FOOTER --- */
+        .pf-footer {
+            background: var(--gray-deep);
+            color: var(--white);
+            padding: 5rem 1.5rem 2rem;
+        }
+
+        .pf-footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .pf-footer-col h4 {
+            color: var(--white);
+            font-size: var(--text-base);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .pf-footer-link {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+            transition: color 0.2s;
+        }
+
+        .pf-footer-link:hover { color: var(--blue-light); }
+
+        .pf-footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            opacity: 0.5;
+        }
+
+        /* --- DROPDOWN MENU --- */
+        .pf-dropdown {
+            position: fixed;
+            top: 80px;
+            right: 1.5rem;
+            width: 280px;
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            padding: 1rem;
+            display: none;
+            z-index: 3000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .pf-dropdown.active { display: block; }
+
+        .pf-dropdown-item {
+            padding: 0.875rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--gray-dark);
+            border-radius: 12px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .pf-dropdown-item:hover {
+            background: var(--gray-v-light);
+            color: var(--blue-prof);
+        }
+
+        .pf-ascii { font-family: monospace; font-weight: 700; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .pf-hero h1 { font-size: 2.5rem; }
+            .pf-cta-group { flex-direction: column; }
+            .pf-btn { width: 100%; justify-content: center; }
+            .pf-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Centralisé -->
+    <header class="pf-header">
+        <div class="pf-header-container">
+            <div class="pf-logo">
+                <!-- Remplacer par ton logo réel assets/logos/payfusion-logo.png -->
+                <div class="pf-ascii" style="font-size: 1.5rem; color: var(--blue-prof);">PAY FUSION</div>
+            </div>
+
+            <div class="pf-menu-trigger" id="menu-trigger">
+                <span class="pf-ascii">---</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menu Dropdown -->
+    <div class="pf-dropdown" id="dropdown-menu">
+        <a href="index.html" class="pf-dropdown-item">
+            <span class="pf-ascii">[✓]</span> Accueil
+        </a>
+        <a href="login.html" class="pf-dropdown-item">
+            <span class="pf-ascii">[ ]</span> Se Connecter
+        </a>
+        <a href="register.html" class="pf-dropdown-item">
+            <span class="pf-ascii">[ ]</span> S'inscrire
+        </a>
+        <hr style="margin: 0.5rem 0; border: 0; border-top: 1px solid var(--gray-light);">
+        <a href="support.html" class="pf-dropdown-item">
+            <span class="pf-ascii">[ ]</span> Centre d'aide
+        </a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="pf-hero">
+        <div class="pf-badge">Propulsé par la technologie Firebase</div>
+        <h1>Votre destination de confiance pour vos services numériques.</h1>
+        <p>Simplifiez vos paiements internationaux, vos recharges Free Fire et vos abonnements Netflix depuis une interface professionnelle unique conçue pour Haïti.</p>
+        
+        <div class="pf-cta-group">
+            <a href="register.html" class="pf-btn pf-btn-primary">
+                Créer un compte <span class="pf-ascii">></span>
+            </a>
+            <a href="#services" class="pf-btn pf-btn-outline">
+                Explorer les services
+            </a>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="pf-section" id="services">
+        <div class="pf-section-header">
+            <h2>Une solution complète pour vos besoins</h2>
+            <p>Découvrez notre gamme de services premium adaptés à votre quotidien.</p>
+        </div>
+
+        <div class="pf-grid">
+            <!-- Finance -->
+            <div class="pf-service-card">
+                <div class="pf-icon-box">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <h3>Finance & Rechargement</h3>
+                <p>Alimentez vos portefeuilles numériques instantanément avec des taux compétitifs.</p>
+                <ul class="pf-feature-list">
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> Wise & PayPal Business</li>
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> USDT (TRC20) Instantané</li>
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> Taux fixe: 1 USD = 150 HTG</li>
+                </ul>
+                <a href="login.html" class="pf-btn pf-btn-outline" style="width: 100%; justify-content: center;">Commencer</a>
+            </div>
+
+            <!-- Gaming -->
+            <div class="pf-service-card">
+                <div class="pf-icon-box" style="color: #f97316;">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <h3>Gaming Center</h3>
+                <p>Recharges diamants Free Fire via ID joueur. Le service le plus rapide du marché.</p>
+                <ul class="pf-feature-list">
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> Plus de 21 packs disponibles</li>
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> Livraison en 10-30 minutes</li>
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> Support WhatsApp direct</li>
+                </ul>
+                <a href="login.html" class="pf-btn pf-btn-outline" style="width: 100%; justify-content: center;">Recharger</a>
+            </div>
+
+            <!-- Streaming -->
+            <div class="pf-service-card">
+                <div class="pf-icon-box" style="color: #8b5cf6;">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+                <h3>Streaming Premium</h3>
+                <p>Accédez au meilleur du divertissement mondial sans carte bancaire.</p>
+                <ul class="pf-feature-list">
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> Netflix Premium 4K</li>
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> Comptes stables & garantis</li>
+                    <li class="pf-feature-item"><span class="pf-check">✓</span> Meilleur prix/mois en Haïti</li>
+                </ul>
+                <a href="login.html" class="pf-btn pf-btn-outline" style="width: 100%; justify-content: center;">S'abonner</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="pf-section pf-bg-gray">
+        <div class="pf-section-header">
+            <h2>Ce que disent nos clients</h2>
+        </div>
+        <div class="pf-grid">
+            <div class="pf-testimonial-card">
+                <div class="pf-stars">★★★★★</div>
+                <p class="pf-testi-text">"La recharge Wise est faite en un temps record. Taux très honnête et service professionnel."</p>
+                <div class="pf-user">
+                    <div class="pf-user-avatar">JB</div>
+                    <div style="font-weight: 700;">Jean-Baptiste R.</div>
+                </div>
+            </div>
+            <div class="pf-testimonial-card">
+                <div class="pf-stars">★★★★★</div>
+                <p class="pf-testi-text">"Je n'utilise que Pay Fusion pour mes diamants Free Fire. Jamais déçu de la rapidité."</p>
+                <div class="pf-user">
+                    <div class="pf-user-avatar" style="background: #ffedd5; color: #f97316;">ML</div>
+                    <div style="font-weight: 700;">Marie-Lourdes P.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pf-footer">
+        <div class="pf-footer-grid">
+            <div class="pf-footer-col">
+                <h4>PAY FUSION</h4>
+                <p style="opacity: 0.6; font-size: 0.8rem;">La plateforme haïtienne de référence pour les services financiers et numériques. Efficacité, Rapidité, Sécurité.</p>
+            </div>
+            <div class="pf-footer-col">
+                <h4>Services</h4>
+                <a href="#" class="pf-footer-link">Recharges Financières</a>
+                <a href="#" class="pf-footer-link">Gaming Free Fire</a>
+                <a href="#" class="pf-footer-link">Streaming Netflix</a>
+            </div>
+            <div class="pf-footer-col">
+                <h4>Support</h4>
+                <a href="#" class="pf-footer-link">FAQ</a>
+                <a href="#" class="pf-footer-link">WhatsApp: +509 3944-2808</a>
+                <a href="#" class="pf-footer-link">Email: support.payfusion@gmail.com</a>
+            </div>
+        </div>
+        <div class="pf-footer-bottom">
+            <div>Copyright (c) 2025 PAY FUSION. Tous droits réservés.</div>
+            <div>Haiti | Port-au-Prince</div>
+        </div>
+    </footer>
+
+    <script>
+        // Logique du Menu
+        const trigger = document.getElementById('menu-trigger');
+        const dropdown = document.getElementById('dropdown-menu');
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
+            trigger.querySelector('.pf-ascii').innerText = dropdown.classList.contains('active') ? 'XXX' : '---';
+        });
+
+        document.addEventListener('click', () => {
+            dropdown.classList.remove('active');
+            trigger.querySelector('.pf-ascii').innerText = '---';
+        });
+
+        // Animation au scroll simple
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.pf-header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 10px 30px rgba(0,0,0,0.08)';
+            } else {
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Communauté - PAY FUSION</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --gaming: #f97316;
+            --streaming: #8b5cf6;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        /* --- BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: var(--font-main);
+            font-size: 0.875rem; /* 14px PROFESSIONNEL */
+            color: var(--gray-dark);
+            background-color: var(--gray-v-light);
+            line-height: 1.6;
+        }
+
+        /* --- LAYOUT --- */
+        .pf-dashboard { display: flex; min-height: 100vh; }
+
+        /* --- SIDEBAR --- */
+        .pf-sidebar {
+            width: 280px; background: var(--white); border-right: 1px solid var(--gray-light);
+            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .pf-sidebar-header { padding: 2rem 1.5rem; border-bottom: 1px solid var(--gray-light); }
+        .pf-brand { font-size: 1.25rem; font-weight: 800; color: var(--blue-prof); margin-bottom: 1.5rem; display: block; }
+        .pf-sidebar-content { flex: 1; padding: 1.5rem; overflow-y: auto; }
+        .pf-nav-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-dark); opacity: 0.5; margin-bottom: 1rem; display: block; }
+        
+        .pf-nav-item {
+            display: flex; align-items: center; padding: 0.75rem 0; color: var(--gray-dark);
+            text-decoration: none; font-weight: 500; cursor: pointer; transition: all 0.2s;
+        }
+        .pf-nav-item:hover { color: var(--blue-prof); }
+        .pf-nav-item.active { color: var(--blue-prof); font-weight: 700; }
+        .pf-checkbox-design {
+            width: 18px; height: 18px; border: 2px solid var(--gray-dark); border-radius: 4px;
+            margin-right: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 900;
+        }
+        .pf-nav-item.active .pf-checkbox-design { background: var(--blue-prof); border-color: var(--blue-prof); color: var(--white); }
+
+        /* --- MAIN CONTENT --- */
+        .pf-main { flex: 1; margin-left: 280px; padding: 2rem; width: 100%; }
+        .pf-section-title { font-size: 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+
+        /* --- HERO --- */
+        .community-hero {
+            background: linear-gradient(135deg, var(--blue-prof), var(--blue-light));
+            color: var(--white); border-radius: 16px; padding: 2.5rem; margin-bottom: 3rem;
+        }
+        .community-hero h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+        .community-hero p { opacity: 0.9; font-size: 0.95rem; max-width: 500px; }
+
+        /* --- SOCIAL CARDS --- */
+        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .social-card {
+            background: var(--white); border: 1px solid var(--gray-light); border-radius: 12px;
+            padding: 1.5rem; text-align: center; text-decoration: none; color: inherit;
+            transition: all 0.3s ease;
+        }
+        .social-card:hover { transform: translateY(-5px); border-color: var(--blue-prof); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .social-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .social-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+        .social-card p { font-size: 0.75rem; opacity: 0.6; }
+
+        /* --- ANNOUNCEMENTS --- */
+        .announcement-list { display: flex; flex-direction: column; gap: 1rem; }
+        .announcement-card {
+            background: var(--white); border: 1px solid var(--gray-light); border-radius: 12px;
+            padding: 1.5rem; border-left: 4px solid var(--gaming);
+        }
+        .announcement-meta { display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.5; margin-bottom: 0.5rem; }
+        .announcement-card h4 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--blue-prof); }
+        .announcement-text { font-size: 0.85rem; line-height: 1.6; }
+
+        /* --- MOBILE --- */
+        .menu-trigger {
+            position: fixed; top: 1rem; right: 1rem; z-index: 1001;
+            background: var(--white); border: 1px solid var(--gray-light);
+            padding: 10px; border-radius: 8px; display: none; cursor: pointer;
+        }
+
+        @media (max-width: 992px) {
+            .pf-sidebar { transform: translateX(-100%); }
+            .pf-sidebar.show { transform: translateX(0); }
+            .pf-main { margin-left: 0; padding: 1.5rem; padding-top: 4rem; }
+            .menu-trigger { display: block; }
+        }
+
+        .ascii { font-family: monospace; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-trigger" id="pf-menu-toggle">
+        <span class="ascii">---</span>
+    </div>
+
+    <div class="pf-dashboard">
+        <!-- Sidebar -->
+        <aside class="pf-sidebar" id="pf-sidebar">
+            <div class="pf-sidebar-header">
+                <span class="pf-brand">PAY FUSION</span>
+            </div>
+            <div class="pf-sidebar-content">
+                <div class="pf-nav-section">
+                    <span class="pf-nav-label">Navigation</span>
+                    <a href="home.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Accueil
+                    </a>
+                    <a href="community.html" class="pf-nav-item active">
+                        <div class="pf-checkbox-design"><span class="ascii">✓</span></div> Communauté
+                    </a>
+                    <a href="notifications.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Notifications
+                    </a>
+                </div>
+                <div class="pf-nav-section">
+                    <span class="pf-nav-label">Services</span>
+                    <a href="services.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Finance
+                    </a>
+                    <a href="freefire.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Gaming
+                    </a>
+                    <a href="netflix.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Streaming
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="pf-main">
+            <div class="community-hero">
+                <h1>Rejoignez notre Communauté</h1>
+                <p>Restez informé des nouveaux arrivages, des baisses de tarifs et des offres exclusives réservées à nos membres.</p>
+            </div>
+
+            <h2 class="pf-section-title"><span class="ascii">●</span> Nos Réseaux Officiels</h2>
+            <div class="social-grid">
+                <a href="https://wa.me/50939442808" class="social-card">
+                    <i class="fa-brands fa-whatsapp social-icon" style="color: #25d366;"></i>
+                    <h3>Canal WhatsApp</h3>
+                    <p>Alertes et Support instantanés</p>
+                </a>
+                <a href="#" class="social-card">
+                    <i class="fa-brands fa-telegram social-icon" style="color: #0088cc;"></i>
+                    <h3>Groupe Telegram</h3>
+                    <p>Communauté et Échanges</p>
+                </a>
+                <a href="#" class="social-card">
+                    <i class="fa-brands fa-facebook social-icon" style="color: #1877f2;"></i>
+                    <h3>Facebook</h3>
+                    <p>Actualités PAY FUSION</p>
+                </a>
+            </div>
+
+            <h2 class="pf-section-title"><span class="ascii">●</span> Dernières Annonces</h2>
+            <div class="announcement-list" id="announcement-list">
+                <!-- Chargement initial -->
+                <div style="text-align: center; padding: 2rem; opacity: 0.5;">
+                    <span class="ascii">● ● ●</span> Chargement des actualités...
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- AUTH ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                listenToAnnouncements();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // --- ANNOUNCEMENTS ---
+        function listenToAnnouncements() {
+            const q = query(
+                collection(db, "announcements"),
+                orderBy("createdAt", "desc"),
+                limit(5)
+            );
+
+            onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('announcement-list');
+                
+                if (snapshot.empty) {
+                    list.innerHTML = `
+                        <div class="announcement-card">
+                            <h4>Bienvenue sur PAY FUSION !</h4>
+                            <p class="announcement-text">Aucune annonce particulière pour le moment. Profitez de nos services de finance, gaming et streaming au meilleur prix.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const a = docSnap.data();
+                    const date = a.createdAt ? new Date(a.createdAt.seconds * 1000).toLocaleDateString('fr-FR') : 'Aujourd\'hui';
+                    
+                    html += `
+                        <div class="announcement-card">
+                            <div class="announcement-meta">
+                                <span>PUBLIÉ PAR L'ADMIN</span>
+                                <span>${date}</span>
+                            </div>
+                            <h4>${a.title}</h4>
+                            <p class="announcement-text">${a.message}</p>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            });
+        }
+
+        // --- UI LOGIC ---
+        const toggle = document.getElementById('pf-menu-toggle');
+        const sidebar = document.getElementById('pf-sidebar');
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => sidebar.classList.remove('show'));
+
+    </script>
+</body>
+</html>

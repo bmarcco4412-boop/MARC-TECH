@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Support & Aide - PAY FUSION</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --success: #10b981;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        /* --- BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-main);
+            font-size: 0.875rem; /* 14px */
+            color: var(--gray-dark);
+            background-color: var(--gray-v-light);
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+
+        .container { max-width: 700px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* --- HEADER --- */
+        header {
+            height: 70px; background: var(--white); border-bottom: 1px solid var(--gray-light);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        }
+
+        .btn-back { color: var(--gray-dark); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); }
+        .logo-center img { height: 35px; }
+
+        /* --- HERO --- */
+        .support-hero { text-align: center; margin-bottom: 3rem; }
+        .support-hero h1 { font-size: 1.5rem; color: var(--blue-prof); margin-bottom: 0.5rem; }
+        .support-hero p { opacity: 0.7; }
+
+        /* --- CONTACT CARDS --- */
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 3rem; }
+        .contact-card {
+            background: var(--white); border: 1px solid var(--gray-light); border-radius: 12px;
+            padding: 1.5rem; text-align: center; text-decoration: none; color: inherit;
+            transition: all 0.3s ease;
+        }
+        .contact-card:hover { transform: translateY(-3px); border-color: var(--blue-prof); }
+        .contact-icon { font-size: 1.5rem; color: var(--blue-prof); margin-bottom: 1rem; display: block; }
+        .contact-card h3 { font-size: 0.9rem; margin-bottom: 0.25rem; }
+        .contact-card p { font-size: 0.75rem; opacity: 0.6; }
+
+        /* --- FAQ SECTION --- */
+        .pf-section { background: var(--white); border: 1px solid var(--gray-light); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--gray-dark); border-bottom: 1px solid var(--gray-light); padding-bottom: 0.5rem; }
+
+        .faq-item { border-bottom: 1px solid var(--gray-v-light); padding: 1rem 0; cursor: pointer; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+        .faq-answer { font-size: 0.8rem; opacity: 0.7; margin-top: 0.75rem; display: none; padding-right: 1.5rem; }
+        .faq-item.active .faq-answer { display: block; animation: fadeIn 0.3s ease; }
+        .faq-toggle { font-family: monospace; font-weight: bold; color: var(--blue-prof); }
+
+        /* --- WHATSAPP FLOAT --- */
+        .wa-float {
+            position: fixed; bottom: 2rem; right: 2rem; background: #25d366; color: white;
+            width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 1.8rem; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+            z-index: 1002; transition: transform 0.3s;
+        }
+        .wa-float:hover { transform: scale(1.1); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .ascii { font-family: monospace; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="home.html" class="btn-back"><span class="ascii"><</span> Retour</a>
+        <div class="logo-center"><img src="assets/logos/placeholder.png" alt="PAY FUSION"></div>
+    </header>
+
+    <div class="container">
+        <div class="support-hero">
+            <h1>Centre de Support</h1>
+            <p>Comment pouvons-nous vous aider aujourd'hui ?</p>
+        </div>
+
+        <div class="contact-grid">
+            <a href="https://wa.me/50939442808" class="contact-card">
+                <i class="fa-brands fa-whatsapp contact-icon"></i>
+                <h3>WhatsApp</h3>
+                <p>Réponse en < 15 min</p>
+            </a>
+            <a href="mailto:support.payfusion@gmail.com" class="contact-card">
+                <i class="fa-solid fa-envelope contact-icon"></i>
+                <h3>Email Support</h3>
+                <p>Réponse sous 24h</p>
+            </a>
+        </div>
+
+        <section class="pf-section">
+            <h2 class="section-title">Questions Fréquentes (FAQ)</h2>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>Quel est le délai de livraison ?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Les commandes sont généralement traitées entre 10 et 30 minutes après la validation de votre preuve de paiement par l'administrateur.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>Quels sont les modes de paiement ?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Nous acceptons MonCash (+50939442808), NatCash (+50935741778) et les USDT (Réseau TRC20). Toutes les transactions se font vers Marco Bien-Aimé.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>Comment marche le taux de change ?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Sur PAY FUSION, le taux est fixe : 1 USD = 150 HTG. Aucun frais caché n'est appliqué lors du calcul de votre commande.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>Ma commande est en attente, que faire ?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Pas d'inquiétude ! Si vous avez bien envoyé votre preuve de paiement sur la page dédiée, l'administrateur est en train de la vérifier. Vous recevrez une notification dès qu'elle sera validée.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span>Est-ce que le service est disponible 24/7 ?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Vous pouvez passer commande à tout moment. Le traitement manuel par l'équipe s'effectue généralement de 8h00 à 22h00 tous les jours.
+                </div>
+            </div>
+        </section>
+
+        <section class="pf-section" style="text-align: center;">
+            <p style="font-weight: 600; margin-bottom: 0.5rem;">Vous n'avez pas trouvé votre réponse ?</p>
+            <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 1.5rem;">Contactez directement Marco Bien-Aimé pour une assistance personnalisée.</p>
+            <a href="https://wa.me/50939442808" class="btn-back" style="justify-content: center; color: var(--blue-prof); font-size: 1rem;">
+                Démarrer une conversation <span class="ascii">—></span>
+            </a>
+        </section>
+    </div>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/50939442808" class="wa-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- FAQ TOGGLE ---
+        window.toggleFaq = function(element) {
+            const isActive = element.classList.contains('active');
+            
+            // Fermer tous les autres
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('.faq-toggle').innerText = '+';
+            });
+
+            if (!isActive) {
+                element.classList.add('active');
+                element.querySelector('.faq-toggle').innerText = '-';
+            }
+        };
+
+        // Sécurité session
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

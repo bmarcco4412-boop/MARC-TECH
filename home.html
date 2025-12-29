@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tableau de Bord | PAY FUSION</title>
+    
+    <!-- Typographie Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CONFIGURATION DES VARIABLES --- */
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-700: #334155;
+            --gray-900: #0f172a;
+            --success: #10b981;
+            --error: #ef4444;
+            --font-main: 'Inter', system-ui, sans-serif;
+            --sidebar-width: 280px;
+        }
+
+        /* --- RESET & BASE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            font-size: 0.875rem; /* 14px PROFESSIONNEL */
+            color: var(--gray-700);
+            background-color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- LAYOUT STRUCTURE --- */
+        .pf-dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .pf-sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pf-sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .pf-brand {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--blue-prof);
+            letter-spacing: -0.5px;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .pf-user-snippet {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--gray-100);
+        }
+
+        .pf-user-name {
+            font-weight: 700;
+            color: var(--gray-900);
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pf-user-email {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            display: block;
+        }
+
+        .pf-sidebar-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .pf-nav-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-700);
+            opacity: 0.4;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .pf-sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .pf-sidebar-item:hover { color: var(--blue-prof); }
+        .pf-sidebar-item.active { color: var(--blue-prof); font-weight: 700; }
+
+        .pf-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gray-200);
+            border-radius: 4px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-family: monospace;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .pf-sidebar-item.active .pf-checkbox {
+            background: var(--blue-prof);
+            border-color: var(--blue-prof);
+            color: var(--white);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .pf-main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2.5rem;
+            background-color: var(--white);
+        }
+
+        /* --- TOP BAR --- */
+        .pf-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .pf-mobile-logo {
+            display: none;
+            font-weight: 800;
+            color: var(--blue-prof);
+            font-size: 1.25rem;
+        }
+
+        .pf-menu-button {
+            width: 44px;
+            height: 44px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--blue-prof);
+            transition: all 0.2s;
+        }
+
+        /* --- DASHBOARD ELEMENTS --- */
+        .pf-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .pf-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .pf-balance-card {
+            background: linear-gradient(135deg, var(--blue-prof) 0%, var(--blue-light) 100%);
+            color: var(--white);
+            border: none;
+            box-shadow: 0 10px 30px -5px rgba(37, 99, 235, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .pf-balance-label { font-size: 0.75rem; font-weight: 600; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+        .pf-balance-value { font-size: 2.5rem; font-weight: 800; margin: 0.5rem 0; letter-spacing: -1px; }
+
+        .pf-quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .pf-action-box {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--gray-900);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .pf-action-box:hover {
+            border-color: var(--blue-prof);
+            background: var(--blue-very-light);
+            transform: translateY(-4px);
+        }
+
+        .pf-action-box i { font-size: 1.5rem; color: var(--blue-prof); margin-bottom: 0.75rem; display: block; }
+
+        /* --- TABLE STYLE --- */
+        .pf-section-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pf-section-title::before {
+            content: ""; width: 4px; height: 24px; background: var(--blue-prof); border-radius: 4px;
+        }
+
+        .pf-table-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+        }
+
+        .pf-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+        }
+
+        .pf-table th {
+            text-align: left;
+            padding: 1rem 1.5rem;
+            background: var(--gray-50);
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--gray-700);
+            opacity: 0.6;
+        }
+
+        .pf-table td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.875rem;
+        }
+
+        .pf-status {
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pf-status-pending { background: #fff7ed; color: #9a3412; }
+        .pf-status-completed { background: #f0fdf4; color: #166534; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .pf-sidebar { transform: translateX(-100%); }
+            .pf-sidebar.active { transform: translateX(0); }
+            .pf-main { margin-left: 0; padding: 1.5rem; }
+            .pf-mobile-logo { display: block; }
+            .pf-grid { grid-template-columns: 1fr; }
+        }
+
+        .pf-ascii { font-family: monospace; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <div class="pf-dashboard-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="pf-sidebar" id="sidebar">
+            <div class="pf-sidebar-header">
+                <span class="pf-brand">PAY FUSION</span>
+                <div class="pf-user-snippet">
+                    <span class="pf-user-name" id="display-name">Chargement...</span>
+                    <span class="pf-user-email" id="display-email">...</span>
+                </div>
+            </div>
+
+            <nav class="pf-sidebar-content">
+                <span class="pf-nav-label">Section Accueil</span>
+                
+                <a href="freefire.html" class="pf-sidebar-item">
+                    <div class="pf-checkbox"> </div> Recharge Jeux
+                </a>
+                <a href="netflix.html" class="pf-sidebar-item active">
+                    <div class="pf-checkbox">✓</div> Streaming
+                </a>
+                <a href="services.html" class="pf-sidebar-item">
+                    <div class="pf-checkbox"> </div> Services financiers
+                </a>
+                <a href="services.html" class="pf-sidebar-item">
+                    <div class="pf-checkbox"> </div> Cartes Cadeaux
+                </a>
+                <a href="commande.html" class="pf-sidebar-item">
+                    <div class="pf-checkbox"> </div> Commandes
+                </a>
+                <a href="account.html" class="pf-sidebar-item">
+                    <div class="pf-checkbox"> </div> Profil
+                </a>
+                <a href="settings.html" class="pf-sidebar-item">
+                    <div class="pf-checkbox"> </div> Paramètres
+                </a>
+
+                <span class="pf-nav-label" style="margin-top: 2rem;">Aide et Soutien</span>
+                <a href="https://wa.me/50939442808" class="pf-sidebar-item" target="_blank">
+                    <div class="pf-checkbox">✓</div> Canal WhatsApp
+                </a>
+                <div class="pf-sidebar-item" id="logout-sidebar" style="color: var(--error);">
+                    <div class="pf-checkbox"> </div> Se Déconnecter
+                </div>
+            </nav>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="pf-main">
+            <!-- TOP BAR -->
+            <header class="pf-top-bar">
+                <div class="pf-mobile-logo">PAY FUSION</div>
+                <div></div> <!-- Spacer -->
+                <div class="pf-menu-button" id="menu-trigger">
+                    <span class="pf-ascii">---</span>
+                </div>
+            </header>
+
+            <!-- GRID DASHBOARD -->
+            <div class="pf-grid">
+                <!-- Solde Card -->
+                <div class="pf-card pf-balance-card">
+                    <span class="pf-balance-label">Solde Disponible</span>
+                    <div class="pf-balance-value" id="user-balance">0.00 HTG</div>
+                    <div style="font-size: 0.8rem; opacity: 0.7;">Taux de change fixe : 1 USD = 150 HTG</div>
+                </div>
+
+                <!-- Actions Card -->
+                <div class="pf-card">
+                    <span class="pf-nav-label" style="margin-top: 0;">Raccourcis</span>
+                    <div class="pf-quick-actions">
+                        <a href="payment.html" class="pf-action-box">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span style="font-size: 0.7rem;">DÉPÔT</span>
+                        </a>
+                        <a href="freefire.html" class="pf-action-box">
+                            <i class="fa-solid fa-gamepad"></i>
+                            <span style="font-size: 0.7rem;">GAMING</span>
+                        </a>
+                        <a href="services.html" class="pf-action-box">
+                            <i class="fa-solid fa-exchange-alt"></i>
+                            <span style="font-size: 0.7rem;">FINANCE</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTIVITY TABLE -->
+            <h3 class="pf-section-title">Activité Récente</h3>
+            <div class="pf-table-container">
+                <table class="pf-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Service / Produit</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-activity-list">
+                        <!-- Rempli par Firebase -->
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 3rem; opacity: 0.5;">
+                                <span class="pf-ascii">● ● ●</span> Chargement de vos données...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK & Logique -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, collection, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Configuration Firebase (Réelle)
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DASHBOARD INITIALISATION ---
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // 1. Charger les infos utilisateur & Solde en temps réel
+            onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('display-name').innerText = data.displayName || "Utilisateur";
+                    document.getElementById('display-email').innerText = data.email;
+                    
+                    const balance = data.balance || 0;
+                    document.getElementById('user-balance').innerText = balance.toLocaleString('en-US') + " HTG";
+                }
+            });
+
+            // 2. Charger les 5 dernières activités
+            const activityQuery = query(
+                collection(db, "orders"),
+                where("userId", "==", user.uid),
+                orderBy("createdAt", "desc"),
+                limit(5)
+            );
+
+            onSnapshot(activityQuery, (snapshot) => {
+                const list = document.getElementById('recent-activity-list');
+                if (snapshot.empty) {
+                    list.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; opacity: 0.5;">Aucune commande récente.</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const order = docSnap.data();
+                    const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR') : '---';
+                    html += `
+                        <tr>
+                            <td>${date}</td>
+                            <td><span style="font-weight:700; color:var(--gray-900)">${order.serviceName}</span></td>
+                            <td style="font-weight:700; color:var(--blue-prof)">${order.totalHTG.toLocaleString()} HTG</td>
+                            <td><span class="pf-status pf-status-${order.status}">${order.status}</span></td>
+                        </tr>
+                    `;
+                });
+                list.innerHTML = html;
+            });
+        });
+
+        // --- GESTION INTERFACE ---
+
+        const menuTrigger = document.getElementById('menu-trigger');
+        const sidebar = document.getElementById('sidebar');
+
+        menuTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+            menuTrigger.querySelector('.pf-ascii').innerText = sidebar.classList.contains('active') ? 'XXX' : '---';
+        });
+
+        document.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            menuTrigger.querySelector('.pf-ascii').innerText = '---';
+        });
+
+        // Déconnexion
+        const logout = () => signOut(auth).then(() => window.location.href = 'index.html');
+        document.getElementById('logout-sidebar').addEventListener('click', logout);
+
+    </script>
+</body>
+</html>

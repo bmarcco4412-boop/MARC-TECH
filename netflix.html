@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Netflix Premium - PAY FUSION</title>
+    <!-- Polices et Icones Externes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- CONFIGURATION DES COULEURS --- */
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --streaming: #8b5cf6; /* Violet Streaming */
+            --line-height: 1.6;
+            --font-main: 'Inter', sans-serif;
+            --text-normal: 0.875rem; /* 14px */
+        }
+
+        /* --- BASE RESET --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: var(--font-main);
+            font-size: var(--text-normal);
+            color: var(--gray-dark);
+            background-color: var(--gray-v-light);
+            line-height: var(--line-height);
+            padding-bottom: 120px;
+        }
+
+        /* --- HEADER --- */
+        .pf-header {
+            height: 70px;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .pf-logo-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .pf-logo-center img { height: 40px; }
+
+        .pf-btn-back {
+            color: var(--gray-dark);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pf-menu-trigger {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* --- CONTAINER --- */
+        .pf-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* --- HERO --- */
+        .pf-hero-streaming {
+            text-align: center;
+            margin-bottom: 4rem; /* 64px */
+        }
+
+        .pf-hero-streaming h1 {
+            font-size: 2rem; /* 32px */
+            font-weight: 800;
+            color: var(--streaming);
+            margin-bottom: 1rem;
+        }
+
+        .pf-hero-streaming p {
+            opacity: 0.7;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* --- NETFLIX CARDS --- */
+        .pf-netflix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .pf-net-card {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .pf-net-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--streaming);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.1);
+        }
+
+        .pf-net-card.active {
+            border-color: var(--streaming);
+            border-width: 2px;
+            background: #f5f3ff;
+        }
+
+        .pf-badge-offer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--streaming);
+            color: var(--white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pf-plan-duration {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--gray-dark);
+        }
+
+        .pf-plan-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--streaming);
+            margin-bottom: 0.25rem;
+        }
+
+        .pf-plan-monthly {
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0.5;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .pf-net-features {
+            list-style: none;
+            text-align: left;
+            margin-top: auto;
+            border-top: 1px solid var(--gray-light);
+            padding-top: 1.5rem;
+        }
+
+        .pf-net-feat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .pf-feat-icon { color: var(--streaming); width: 16px; text-align: center; }
+
+        /* --- FORM DELIVERY --- */
+        .pf-delivery-section {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .pf-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pf-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .pf-label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--gray-dark);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .pf-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 8px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .pf-input:focus { border-color: var(--streaming); }
+
+        /* --- STICKY FOOTER --- */
+        .pf-sticky-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--gray-light);
+            padding: 1.5rem;
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.05);
+            z-index: 1001;
+        }
+
+        .pf-footer-flex {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pf-total-info { display: flex; flex-direction: column; }
+        .pf-total-lbl { font-size: 0.75rem; font-weight: 700; opacity: 0.5; text-transform: uppercase; }
+        .pf-total-val { font-size: 1.5rem; font-weight: 800; color: var(--streaming); }
+
+        .pf-btn-add {
+            background: var(--blue-prof);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .pf-btn-add:active { transform: scale(0.95); }
+
+        /* --- UTILS --- */
+        .pf-ascii { font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="pf-header">
+        <a href="home.html" class="pf-btn-back">
+            <span class="pf-ascii"><</span> Retour
+        </a>
+        <div class="pf-logo-center">
+            <img src="assets/logos/netflix-logo.png" alt="Netflix" onerror="this.src='https://via.placeholder.com/120x40?text=Netflix'">
+        </div>
+        <div class="pf-menu-trigger">
+            <span class="pf-ascii">---</span>
+        </div>
+    </header>
+
+    <div class="pf-container">
+        
+        <!-- HERO -->
+        <section class="pf-hero-streaming">
+            <h1>Netflix Premium 4K</h1>
+            <p>Profitez du meilleur du cinéma et de vos séries préférées en Ultra HD sur tous vos écrans.</p>
+        </section>
+
+        <!-- PLANS GRID -->
+        <div class="pf-netflix-grid">
+            <!-- 1 MOIS -->
+            <div class="pf-net-card" id="plan-1" onclick="selectPlan(1, 450, 'Netflix Premium 1 Mois')">
+                <span class="pf-plan-duration">1 MOIS</span>
+                <span class="pf-plan-price">450 HTG</span>
+                <span class="pf-plan-monthly">450 HTG / Mois</span>
+                <ul class="pf-net-features">
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-tv pf-feat-icon"></i> Qualité 4K + HDR</li>
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-display pf-feat-icon"></i> 4 Écrans simultanés</li>
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-download pf-feat-icon"></i> Téléchargements illimités</li>
+                </ul>
+            </div>
+
+            <!-- 2 MOIS -->
+            <div class="pf-net-card" id="plan-2" onclick="selectPlan(2, 900, 'Netflix Premium 2 Mois')">
+                <div class="pf-badge-offer">Meilleure Valeur</div>
+                <span class="pf-plan-duration">2 MOIS</span>
+                <span class="pf-plan-price">900 HTG</span>
+                <span class="pf-plan-monthly">450 HTG / Mois</span>
+                <ul class="pf-net-features">
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-tv pf-feat-icon"></i> Qualité 4K + HDR</li>
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-display pf-feat-icon"></i> 4 Écrans simultanés</li>
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-shield-check pf-feat-icon"></i> Garantie complète</li>
+                </ul>
+            </div>
+
+            <!-- 3 MOIS -->
+            <div class="pf-net-card" id="plan-3" onclick="selectPlan(3, 1400, 'Netflix Premium 3 Mois')">
+                <div class="pf-badge-offer" style="background: var(--success);">Meilleur Prix</div>
+                <span class="pf-plan-duration">3 MOIS</span>
+                <span class="pf-plan-price">1,400 HTG</span>
+                <span class="pf-plan-monthly">466 HTG / Mois</span>
+                <ul class="pf-net-features">
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-tv pf-feat-icon"></i> Qualité 4K + HDR</li>
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-display pf-feat-icon"></i> 4 Écrans simultanés</li>
+                    <li class="pf-net-feat-item"><i class="fa-solid fa-star pf-feat-icon"></i> Support prioritaire</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- DELIVERY FORM -->
+        <section class="pf-delivery-section">
+            <h2 class="pf-section-title"><span class="pf-ascii">●</span> Informations de livraison</h2>
+            <div class="pf-form-group">
+                <label class="pf-label">Email de votre compte Netflix</label>
+                <input type="email" id="net-email" class="pf-input" placeholder="exemple@gmail.com">
+            </div>
+            <div class="pf-form-group">
+                <label class="pf-label">Numéro WhatsApp</label>
+                <input type="tel" id="net-wa" class="pf-input" placeholder="+509 ...">
+            </div>
+        </section>
+
+    </div>
+
+    <!-- STICKY FOOTER -->
+    <div class="pf-sticky-footer">
+        <div class="pf-footer-flex">
+            <div class="pf-total-info">
+                <span class="pf-total-lbl">Total à payer</span>
+                <span class="pf-total-val" id="total-display">0 HTG</span>
+            </div>
+            <button class="pf-btn-add" onclick="handleOrder()">
+                AJOUTER AU PANIER <span class="pf-ascii">—></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- LOGIQUE JAVASCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        let selectedPlan = null;
+
+        // --- AUTH CHECK ---
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = 'login.html';
+        });
+
+        // --- SELECTION LOGIQUE ---
+        window.selectPlan = (id, price, name) => {
+            selectedPlan = { id, price, name };
+            
+            // UI Update
+            document.querySelectorAll('.pf-net-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(`plan-${id}`).classList.add('active');
+            
+            document.getElementById('total-display').innerText = price.toLocaleString() + " HTG";
+        };
+
+        // --- COMMANDE LOGIQUE ---
+        window.handleOrder = () => {
+            const email = document.getElementById('net-email').value;
+            const whatsapp = document.getElementById('net-wa').value;
+
+            if (!selectedPlan) {
+                alert("✗ Veuillez sélectionner un abonnement Netflix.");
+                return;
+            }
+
+            if (!email || !whatsapp) {
+                alert("✗ Veuillez remplir les informations de livraison.");
+                return;
+            }
+
+            // Regex simple email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("✗ Format d'email invalide.");
+                return;
+            }
+
+            const orderData = {
+                serviceType: 'Streaming',
+                serviceName: 'Netflix Premium 4K',
+                details: selectedPlan.name,
+                totalHTG: selectedPlan.price,
+                netflixEmail: email,
+                whatsapp: whatsapp,
+                timestamp: Date.now()
+            };
+
+            // Stockage et redirection vers paiement
+            sessionStorage.setItem('currentOrder', JSON.stringify(orderData));
+            window.location.href = 'payment.html';
+        };
+
+    </script>
+</body>
+</html>

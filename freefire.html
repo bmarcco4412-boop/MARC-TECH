@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Free Fire - PAY FUSION</title>
+    <!-- POLICE INTER ET ICONES EXTERNES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- CONFIGURATION DES COULEURS --- */
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-v-light: #dbeafe;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --gaming: #f97316;
+            --line-height: 1.6;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        /* --- BASE RESET --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: var(--font-main);
+            font-size: 0.875rem; /* 14px */
+            color: var(--gray-dark);
+            background-color: var(--gray-v-light);
+            line-height: var(--line-height);
+            padding-bottom: 120px; /* Espace pour le panier fixe */
+        }
+
+        /* --- HEADER --- */
+        .pf-header {
+            height: 70px;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .pf-logo-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .pf-logo-center img { height: 40px; }
+
+        .pf-btn-back {
+            color: var(--gray-dark);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- CONTAINER --- */
+        .pf-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* --- SECTIONS --- */
+        .pf-section {
+            margin-bottom: 4rem; /* 64px */
+        }
+
+        .pf-section-title {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 800;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gaming);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pf-section-title::after {
+            content: "";
+            height: 2px;
+            flex: 1;
+            background: var(--gray-light);
+        }
+
+        /* --- PLAYER FORM --- */
+        .pf-card-form {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .pf-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .pf-label {
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--gray-dark);
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        .pf-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .pf-input:focus { border-color: var(--gaming); }
+
+        /* --- PACKS GRID --- */
+        .pf-packs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .pf-pack-card {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pf-pack-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gaming);
+            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.1);
+        }
+
+        .pf-pack-card.selected {
+            border-color: var(--gaming);
+            background-color: #fff7ed;
+        }
+
+        .pf-pack-card.hidden { display: none; }
+
+        .pf-diamond-icon {
+            font-size: 2rem;
+            color: #0ea5e9;
+            margin-bottom: 1rem;
+        }
+
+        .pf-pack-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pf-pack-price {
+            color: var(--gaming);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .pf-checkbox-ui {
+            margin-top: 1rem;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-dark);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 12px;
+        }
+
+        .pf-pack-card.selected .pf-checkbox-ui {
+            background: var(--gaming);
+            border-color: var(--gaming);
+            color: var(--white);
+        }
+
+        .pf-btn-more {
+            width: 100%;
+            padding: 1rem;
+            background: var(--white);
+            border: 1px dashed var(--gaming);
+            color: var(--gaming);
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: all 0.2s;
+        }
+
+        .pf-btn-more:hover { background: #fff7ed; }
+
+        /* --- SUBSCRIPTIONS --- */
+        .pf-sub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .pf-sub-card {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .pf-sub-card:hover { border-color: var(--blue-prof); }
+        .pf-sub-card.selected { border-color: var(--blue-prof); background: var(--blue-v-light); }
+
+        .pf-sub-info h4 { font-size: 1rem; font-weight: 700; }
+        .pf-sub-info p { font-size: 0.75rem; opacity: 0.7; }
+        .pf-sub-price { font-weight: 800; color: var(--blue-prof); }
+
+        /* --- FLOATING CART --- */
+        .pf-cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--gray-light);
+            padding: 1.5rem;
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
+            z-index: 1001;
+        }
+
+        .pf-cart-flex {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pf-cart-total {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pf-total-label { font-size: 0.75rem; font-weight: 700; opacity: 0.6; text-transform: uppercase; }
+        .pf-total-val { font-size: 1.5rem; font-weight: 800; color: var(--gaming); }
+
+        .pf-btn-command {
+            background: var(--blue-prof);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .pf-btn-command:active { transform: scale(0.95); }
+
+        /* --- UTILS --- */
+        .pf-ascii { font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="pf-header">
+        <a href="home.html" class="pf-btn-back">
+            <span class="pf-ascii"><</span> Retour
+        </a>
+        <div class="pf-logo-center">
+            <img src="assets/logos/freefire-logo.png" alt="Free Fire" onerror="this.src='https://via.placeholder.com/150x50?text=FreeFire'">
+        </div>
+        <div></div> <!-- Placeholder pour l'équilibre -->
+    </header>
+
+    <div class="pf-container">
+        
+        <!-- SECTION 1: INFOS JOUEUR -->
+        <section class="pf-section">
+            <h2 class="pf-section-title"><span class="pf-ascii">●</span> Informations de livraison</h2>
+            <div class="pf-card-form">
+                <div class="pf-input-group">
+                    <label class="pf-label">ID DU COMPTE FREE FIRE</label>
+                    <input type="number" id="player-id" class="pf-input" placeholder="Ex: 123456789">
+                </div>
+                <div class="pf-input-group">
+                    <label class="pf-label">NOM DU COMPTE</label>
+                    <input type="text" id="player-name" class="pf-input" placeholder="Pseudo en jeu">
+                </div>
+                <div class="pf-input-group">
+                    <label class="pf-label">NUMÉRO WHATSAPP</label>
+                    <input type="tel" id="player-wa" class="pf-input" placeholder="+509 ...">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PACKS DIAMANTS -->
+        <section class="pf-section">
+            <h2 class="pf-section-title"><span class="pf-ascii">●</span> Sélectionner des packs</h2>
+            <div class="pf-packs-grid" id="packs-grid">
+                <!-- GÉNÉRÉ PAR JAVASCRIPT -->
+            </div>
+            <button class="pf-btn-more" id="btn-show-more" onclick="showAllPacks()">
+                VOIR TOUS LES PACKS (21) <span class="pf-ascii">+</span>
+            </button>
+        </section>
+
+        <!-- SECTION 3: ABONNEMENTS -->
+        <section class="pf-section">
+            <h2 class="pf-section-title"><span class="pf-ascii">●</span> Abonnements & Pass</h2>
+            <div class="pf-sub-grid">
+                <!-- Semaine -->
+                <div class="pf-sub-card" id="sub-week" onclick="toggleSub('Weekly Membership', 325, 'sub-week')">
+                    <div class="pf-sub-info">
+                        <h4>Abonnement Semaine</h4>
+                        <p>Recevez des diamants quotidiennement pendant 7 jours</p>
+                    </div>
+                    <div class="pf-sub-price">325 Gdes</div>
+                </div>
+                <!-- Mois -->
+                <div class="pf-sub-card" id="sub-month" onclick="toggleSub('Monthly Membership', 1600, 'sub-month')">
+                    <div class="pf-sub-info">
+                        <h4>Abonnement Mois</h4>
+                        <p>Le meilleur pack pour les joueurs réguliers</p>
+                    </div>
+                    <div class="pf-sub-price">1,600 Gdes</div>
+                </div>
+                <!-- Level Up -->
+                <div class="pf-sub-card" id="sub-level" onclick="toggleSub('Level Up Pass', 950, 'sub-level')">
+                    <div class="pf-sub-info">
+                        <h4>Level Up Pass</h4>
+                        <p>Diamants bonus selon votre progression de niveau</p>
+                    </div>
+                    <div class="pf-sub-price">950 Gdes</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- PANIER FIXE -->
+    <div class="pf-cart-bar">
+        <div class="pf-cart-flex">
+            <div class="pf-cart-total">
+                <span class="pf-total-label">Total HTG</span>
+                <span class="pf-total-val" id="total-display">0 HTG</span>
+            </div>
+            <button class="pf-btn-command" onclick="processOrder()">
+                COMMANDER <span class="pf-ascii">—></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- LOGIQUE JAVASCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- DONNÉES DES 21 PACKS ---
+        const packsData = [
+            { id: 1, name: "100+10", price: 165 },
+            { id: 2, name: "200+20", price: 340 },
+            { id: 3, name: "310+31", price: 495 },
+            { id: 4, name: "410+41", price: 660 },
+            { id: 5, name: "520+52", price: 825 },
+            { id: 6, name: "620+62", price: 990 },
+            { id: 7, name: "730+73", price: 1155 },
+            { id: 8, name: "830+83", price: 1320 },
+            { id: 9, name: "940+94", price: 1485 },
+            { id: 10, name: "1060+106", price: 1650 },
+            { id: 11, name: "1200+120", price: 1850 },
+            { id: 12, name: "1500+150", price: 2300 },
+            { id: 13, name: "1800+180", price: 2750 },
+            { id: 14, name: "2180+218", price: 3300 },
+            { id: 15, name: "2500+250", price: 3800 },
+            { id: 16, name: "3000+300", price: 4500 },
+            { id: 17, name: "3500+350", price: 5200 },
+            { id: 18, name: "4000+400", price: 5900 },
+            { id: 19, name: "4500+450", price: 6600 },
+            { id: 20, name: "5000+500", price: 7200 },
+            { id: 21, name: "5600+560", price: 8000 }
+        ];
+
+        let selectedItems = [];
+        let totalHTG = 0;
+
+        // --- INITIALISATION DES PACKS ---
+        function initPacks() {
+            const grid = document.getElementById('packs-grid');
+            packsData.forEach((pack, index) => {
+                const card = document.createElement('div');
+                card.className = `pf-pack-card ${index >= 5 ? 'hidden' : ''}`;
+                card.id = `pack-card-${pack.id}`;
+                card.onclick = () => togglePack(pack.id, pack.name, pack.price);
+                
+                card.innerHTML = `
+                    <div class="pf-diamond-icon"><i class="fa-solid fa-gem"></i></div>
+                    <span class="pf-pack-name">${pack.name} Dms</span>
+                    <span class="pf-pack-price">${pack.price} HTG</span>
+                    <div class="pf-checkbox-ui" id="check-${pack.id}"></div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- GESTION DES SELECTIONS ---
+        window.togglePack = (id, name, price) => {
+            const card = document.getElementById(`pack-card-${id}`);
+            const check = document.getElementById(`check-${id}`);
+            const index = selectedItems.findIndex(i => i.uid === `pack-${id}`);
+
+            if (index > -1) {
+                // Déjà sélectionné -> on retire
+                selectedItems.splice(index, 1);
+                card.classList.remove('selected');
+                check.innerHTML = '';
+            } else {
+                // Non sélectionné -> on ajoute
+                selectedItems.push({ uid: `pack-${id}`, name: `Pack ${name} Dms`, price: price });
+                card.classList.add('selected');
+                check.innerHTML = '✓';
+            }
+            calculateTotal();
+        };
+
+        window.toggleSub = (name, price, elementId) => {
+            const card = document.getElementById(elementId);
+            const index = selectedItems.findIndex(i => i.uid === elementId);
+
+            if (index > -1) {
+                selectedItems.splice(index, 1);
+                card.classList.remove('selected');
+            } else {
+                selectedItems.push({ uid: elementId, name: name, price: price });
+                card.classList.add('selected');
+            }
+            calculateTotal();
+        };
+
+        function calculateTotal() {
+            totalHTG = selectedItems.reduce((acc, item) => acc + item.price, 0);
+            document.getElementById('total-display').innerText = totalHTG.toLocaleString() + " HTG";
+        }
+
+        window.showAllPacks = () => {
+            document.querySelectorAll('.pf-pack-card').forEach(c => c.classList.remove('hidden'));
+            document.getElementById('btn-show-more').style.display = 'none';
+        };
+
+        // --- VALIDATION ET COMMANDE ---
+        window.processOrder = () => {
+            const playerId = document.getElementById('player-id').value;
+            const playerName = document.getElementById('player-name').value;
+            const playerWa = document.getElementById('player-wa').value;
+
+            if (!playerId || !playerName || !playerWa) {
+                alert("✗ Veuillez remplir toutes les informations du joueur.");
+                return;
+            }
+
+            if (selectedItems.length === 0) {
+                alert("✗ Veuillez sélectionner au moins un pack ou abonnement.");
+                return;
+            }
+
+            // Préparation des détails
+            const details = selectedItems.map(i => i.name).join(' + ');
+
+            const orderData = {
+                serviceType: 'Gaming',
+                serviceName: 'Free Fire',
+                details: details,
+                totalHTG: totalHTG,
+                playerID: playerId,
+                playerName: playerName,
+                whatsapp: playerWa,
+                timestamp: Date.now()
+            };
+
+            // Stockage et redirection
+            sessionStorage.setItem('currentOrder', JSON.stringify(orderData));
+            window.location.href = 'payment.html';
+        };
+
+        // --- AUTH CHECK ---
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = 'login.html';
+        });
+
+        // Lancement
+        initPacks();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paramètres - PAY FUSION</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        /* --- BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: var(--font-main);
+            font-size: 0.875rem; /* 14px */
+            color: var(--gray-dark);
+            background-color: var(--gray-v-light);
+            line-height: 1.6;
+        }
+
+        /* --- LAYOUT --- */
+        .pf-dashboard { display: flex; min-height: 100vh; }
+
+        /* --- SIDEBAR --- */
+        .pf-sidebar {
+            width: 280px; background: var(--white); border-right: 1px solid var(--gray-light);
+            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .pf-sidebar-header { padding: 2rem 1.5rem; border-bottom: 1px solid var(--gray-light); }
+        .pf-brand { font-size: 1.25rem; font-weight: 800; color: var(--blue-prof); margin-bottom: 1.5rem; display: block; }
+        .pf-sidebar-content { flex: 1; padding: 1.5rem; overflow-y: auto; }
+        .pf-nav-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-dark); opacity: 0.5; margin-bottom: 1rem; display: block; }
+        
+        .pf-nav-item {
+            display: flex; align-items: center; padding: 0.75rem 0; color: var(--gray-dark);
+            text-decoration: none; font-weight: 500; cursor: pointer; transition: all 0.2s;
+        }
+        .pf-nav-item:hover { color: var(--blue-prof); }
+        .pf-nav-item.active { color: var(--blue-prof); font-weight: 700; }
+        .pf-checkbox-design {
+            width: 18px; height: 18px; border: 2px solid var(--gray-dark); border-radius: 4px;
+            margin-right: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 900;
+        }
+        .pf-nav-item.active .pf-checkbox-design { background: var(--blue-prof); border-color: var(--blue-prof); color: var(--white); }
+
+        /* --- MAIN CONTENT --- */
+        .pf-main { flex: 1; margin-left: 280px; padding: 2rem; width: 100%; }
+        .pf-section-title { font-size: 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+
+        /* --- FORMS & CARDS --- */
+        .pf-card {
+            background: var(--white); border: 1px solid var(--gray-light); border-radius: 16px;
+            padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.85rem; opacity: 0.8; }
+        .form-control {
+            width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--gray-light);
+            border-radius: 8px; font-family: inherit; font-size: 0.875rem; outline: none; transition: all 0.2s;
+        }
+        .form-control:focus { border-color: var(--blue-prof); box-shadow: 0 0 0 3px var(--blue-very-light); }
+        .form-control:disabled { background: var(--gray-v-light); cursor: not-allowed; opacity: 0.7; }
+
+        .btn-save {
+            background: var(--blue-prof); color: white; border: none; padding: 0.75rem 1.5rem;
+            border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-save:hover { background: var(--blue-light); }
+        .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-outline {
+            background: white; color: var(--gray-dark); border: 1.5px solid var(--gray-light);
+            padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;
+        }
+        .btn-outline:hover { border-color: var(--gray-dark); }
+
+        /* --- ALERTS --- */
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.8rem; font-weight: 600; display: none; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        /* --- MOBILE --- */
+        .menu-trigger {
+            position: fixed; top: 1rem; right: 1rem; z-index: 1001;
+            background: var(--white); border: 1px solid var(--gray-light);
+            padding: 10px; border-radius: 8px; display: none; cursor: pointer;
+        }
+
+        @media (max-width: 992px) {
+            .pf-sidebar { transform: translateX(-100%); }
+            .pf-sidebar.show { transform: translateX(0); }
+            .pf-main { margin-left: 0; padding: 1.5rem; padding-top: 4rem; }
+            .menu-trigger { display: block; }
+        }
+
+        .ascii { font-family: monospace; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-trigger" id="pf-menu-toggle">
+        <span class="ascii">---</span>
+    </div>
+
+    <div class="pf-dashboard">
+        <!-- Sidebar -->
+        <aside class="pf-sidebar" id="pf-sidebar">
+            <div class="pf-sidebar-header">
+                <span class="pf-brand">PAY FUSION</span>
+            </div>
+            <div class="pf-sidebar-content">
+                <div class="pf-nav-section">
+                    <span class="pf-nav-label">Navigation</span>
+                    <a href="home.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Accueil
+                    </a>
+                    <a href="account.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Mon Profil
+                    </a>
+                    <a href="settings.html" class="pf-nav-item active">
+                        <div class="pf-checkbox-design"><span class="ascii">✓</span></div> Paramètres
+                    </a>
+                </div>
+                <div class="pf-nav-section">
+                    <span class="pf-nav-label">Support</span>
+                    <a href="support.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Centre d'aide
+                    </a>
+                    <a href="#" class="pf-nav-item" id="btn-logout" style="color: var(--error);">
+                        <div class="pf-checkbox-design"> </div> Déconnexion
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="pf-main">
+            <h2 class="pf-section-title"><span class="ascii">●</span> Paramètres du Compte</h2>
+
+            <div id="status-alert" class="alert"></div>
+
+            <div class="pf-card">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1rem;">Profil Public</h3>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label>NOM COMPLET</label>
+                        <input type="text" id="set-fullname" class="form-control" placeholder="Chargement...">
+                    </div>
+                    <div class="form-group">
+                        <label>NUMÉRO WHATSAPP</label>
+                        <input type="tel" id="set-phone" class="form-control" placeholder="Chargement...">
+                    </div>
+                    <div class="form-group">
+                        <label>ADRESSE EMAIL (Non modifiable)</label>
+                        <input type="email" id="set-email" class="form-control" disabled>
+                    </div>
+                    <button type="submit" class="btn-save" id="btn-profile-save">Enregistrer les modifications <span class="ascii">✓</span></button>
+                </form>
+            </div>
+
+            <div class="pf-card">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1rem; color: var(--error);">Sécurité</h3>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 1.5rem;">Pour changer votre mot de passe, nous vous enverrons un lien de réinitialisation sécurisé sur votre adresse email.</p>
+                <button class="btn-outline" onclick="sendResetEmail()">Réinitialiser le mot de passe <span class="ascii">—></span></button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
+        // --- AUTH & LOAD ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                loadSettings(user.uid);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        function loadSettings(uid) {
+            onSnapshot(doc(db, "users", uid), (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('set-fullname').value = data.displayName || "";
+                    document.getElementById('set-phone').value = data.phoneNumber || "";
+                    document.getElementById('set-email').value = data.email || "";
+                }
+            });
+        }
+
+        // --- UPDATE PROFILE ---
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const btn = document.getElementById('btn-profile-save');
+            const alert = document.getElementById('status-alert');
+            
+            btn.disabled = true;
+            btn.innerText = "ENREGISTREMENT...";
+
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    displayName: document.getElementById('set-fullname').value,
+                    phoneNumber: document.getElementById('set-phone').value
+                });
+
+                showAlert('success', '✓ Vos informations ont été mises à jour avec succès.');
+            } catch (error) {
+                console.error(error);
+                showAlert('error', '✗ Erreur lors de la mise à jour. Veuillez réessayer.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Enregistrer les modifications <span class="ascii">✓</span>';
+            }
+        });
+
+        // --- PASSWORD RESET ---
+        window.sendResetEmail = async function() {
+            if (!currentUser) return;
+            const alert = document.getElementById('status-alert');
+
+            try {
+                await sendPasswordResetEmail(auth, currentUser.email);
+                showAlert('success', '✓ Un email de réinitialisation a été envoyé à ' + currentUser.email);
+            } catch (error) {
+                showAlert('error', '✗ Impossible d\'envoyer l\'email. Veuillez réessayer plus tard.');
+            }
+        };
+
+        function showAlert(type, msg) {
+            const alert = document.getElementById('status-alert');
+            alert.className = `alert alert-${type}`;
+            alert.innerText = msg;
+            alert.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => alert.style.display = 'none', 5000);
+        }
+
+        // --- UI LOGIC ---
+        const toggle = document.getElementById('pf-menu-toggle');
+        const sidebar = document.getElementById('pf-sidebar');
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => sidebar.classList.remove('show'));
+
+        document.getElementById('btn-logout').addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => window.location.href = 'login.html');
+        });
+
+    </script>
+</body>
+</html>

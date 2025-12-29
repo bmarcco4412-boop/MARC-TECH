@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Services Financiers - PAY FUSION</title>
+    <!-- Polices et Icones Externes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- VARIABLES DE COULEURS PROFESSIONNELLES --- */
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-very-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --font-main: 'Inter', sans-serif;
+            --text-normal: 0.875rem; /* 14px */
+        }
+
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-main);
+            font-size: var(--text-normal);
+            color: var(--gray-dark);
+            background-color: var(--gray-very-light);
+            line-height: 1.6;
+            padding-bottom: 4rem;
+        }
+
+        /* --- HEADER --- */
+        .pf-header {
+            height: 70px;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .pf-logo-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .pf-logo-center img { height: 35px; }
+
+        .pf-btn-back {
+            color: var(--gray-dark);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pf-menu-trigger {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* --- CONTAINER --- */
+        .pf-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .pf-section {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .pf-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--blue-prof);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- SERVICE SELECTION --- */
+        .pf-service-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .pf-service-card {
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pf-service-card:hover { border-color: var(--blue-light); background: var(--gray-very-light); }
+        .pf-service-card.active { border-color: var(--blue-prof); background: var(--blue-very-light); }
+
+        .pf-service-card img {
+            width: 100%;
+            height: 40px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+
+        .pf-service-card span { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; display: block; }
+
+        /* --- AMOUNT GRID --- */
+        .pf-amount-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .pf-amount-card {
+            border: 1px solid var(--gray-light);
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .pf-amount-card:hover { border-color: var(--blue-prof); transform: translateY(-2px); }
+        .pf-amount-card.active { background: var(--blue-prof); color: var(--white); border-color: var(--blue-prof); }
+
+        .pf-val-usd { font-size: 1.1rem; font-weight: 800; display: block; margin-bottom: 4px; }
+        .pf-val-htg { font-size: 0.75rem; opacity: 0.8; }
+
+        /* --- CALCULATION PREVIEW --- */
+        .pf-calc-box {
+            background: var(--gray-very-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-left: 4px solid var(--blue-prof);
+        }
+
+        .pf-calc-line { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem; }
+        .pf-calc-rate { font-weight: 600; color: var(--blue-prof); border-bottom: 1px solid var(--gray-light); padding-bottom: 0.5rem; margin-bottom: 0.5rem; }
+        .pf-total-payable { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-light); font-weight: 800; font-size: 1.1rem; color: var(--blue-prof); }
+
+        /* --- FORM --- */
+        .pf-form-group { margin-top: 2rem; }
+        .pf-label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.85rem; }
+        .pf-input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 8px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .pf-input:focus { border-color: var(--blue-prof); }
+
+        .pf-btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--blue-prof);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .pf-btn-submit:disabled { background: var(--gray-light); cursor: not-allowed; }
+
+        /* --- UTILS --- */
+        .pf-ascii { font-family: monospace; }
+        .pf-hidden { display: none; }
+        
+        @media (max-width: 600px) {
+            .pf-service-grid { grid-template-columns: 1fr; }
+            .pf-amount-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="pf-header">
+        <a href="home.html" class="pf-btn-back">
+            <span class="pf-ascii"><</span> Retour
+        </a>
+        <div class="pf-logo-center">
+            <img src="assets/logos/placeholder.png" alt="PAY FUSION">
+        </div>
+        <div class="pf-menu-trigger">
+            <span class="pf-ascii">---</span>
+        </div>
+    </header>
+
+    <div class="pf-container">
+        <!-- 1. Sélection Service -->
+        <section class="pf-section">
+            <h2 class="pf-title"><span class="pf-ascii">●</span> Choisissez votre service</h2>
+            <div class="pf-service-grid">
+                <div class="pf-service-card" onclick="selectService('Wise', 'assets/logos/wise-logo.png')">
+                    <img src="assets/logos/wise-logo.png" alt="Wise" onerror="this.src='https://via.placeholder.com/40x40?text=Wise'">
+                    <span>Wise</span>
+                </div>
+                <div class="pf-service-card" onclick="selectService('PayPal', 'assets/logos/paypal-logo.png')">
+                    <img src="assets/logos/paypal-logo.png" alt="PayPal" onerror="this.src='https://via.placeholder.com/40x40?text=PayPal'">
+                    <span>PayPal</span>
+                </div>
+                <div class="pf-service-card" onclick="selectService('USDT', 'assets/logos/usdt-logo.png')">
+                    <img src="assets/logos/usdt-logo.png" alt="USDT" onerror="this.src='https://via.placeholder.com/40x40?text=USDT'">
+                    <span>USDT</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Sélection Montant (Apparaît après service) -->
+        <section class="pf-section pf-hidden" id="section-amount">
+            <h2 class="pf-title"><span class="pf-ascii">●</span> Sélectionnez le montant</h2>
+            <div class="pf-amount-grid" id="amount-grid">
+                <!-- Généré par JS -->
+            </div>
+        </section>
+
+        <!-- 3. Calculateur & Formulaire (Apparaît après montant) -->
+        <section class="pf-section pf-hidden" id="section-form">
+            <h2 class="pf-title"><span class="pf-ascii">●</span> Détails de la transaction</h2>
+            
+            <div class="pf-calc-box">
+                <div class="pf-calc-line pf-calc-rate">
+                    <span>Exchange Rate</span>
+                    <span>1 USD = 150 HTG</span>
+                </div>
+                <div class="pf-calc-line">
+                    <span>Montant sélectionné</span>
+                    <span id="txt-usd">0.00 USD</span>
+                </div>
+                <div class="pf-calc-line">
+                    <span>Charge</span>
+                    <span>0.0000 USD + 0.0000%</span>
+                </div>
+                <div class="pf-calc-line pf-total-payable">
+                    <span>Total Payable</span>
+                    <span id="txt-htg">0.00 HTG</span>
+                </div>
+            </div>
+
+            <div class="pf-form-group">
+                <label class="pf-label" id="lbl-info">Email de votre compte Wise</label>
+                <input type="text" id="user-info" class="pf-input" placeholder="Entrez vos coordonnées ici...">
+            </div>
+
+            <button class="pf-btn-submit" id="btn-submit" onclick="submitToPayment()">
+                CONTINUER VERS LE PAIEMENT <span class="pf-ascii">—></span>
+            </button>
+        </section>
+    </div>
+
+    <!-- LOGIQUE JAVASCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Configuration Firebase (Réutilisée)
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- VARIABLES D'ÉTAT ---
+        let selectedService = '';
+        let selectedAmountUSD = 0;
+        const exchangeRate = 150;
+
+        // --- AUTH CHECK ---
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = 'login.html';
+        });
+
+        // --- LOGIQUE D'INTERFACE ---
+
+        window.selectService = (name, logo) => {
+            selectedService = name;
+            
+            // UI Cards
+            document.querySelectorAll('.pf-service-card').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Update Labels
+            const label = document.getElementById('lbl-info');
+            if (name === 'USDT') label.innerText = "Adresse de votre portefeuille USDT (TRC20)";
+            else label.innerText = `Email de votre compte ${name}`;
+
+            // Show amount section
+            document.getElementById('section-amount').classList.remove('pf-hidden');
+            generateAmounts();
+            
+            // Scroll
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        };
+
+        function generateAmounts() {
+            const grid = document.getElementById('amount-grid');
+            grid.innerHTML = '';
+            
+            const amounts = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+            
+            amounts.forEach(amt => {
+                const card = document.createElement('div');
+                card.className = 'pf-amount-card';
+                card.innerHTML = `
+                    <span class="pf-val-usd">${amt} USD</span>
+                    <span class="pf-val-htg">${(amt * exchangeRate).toLocaleString()} HTG</span>
+                `;
+                card.onclick = () => selectAmount(amt, card);
+                grid.appendChild(card);
+            });
+        }
+
+        window.selectAmount = (amt, element) => {
+            selectedAmountUSD = amt;
+            
+            // UI Cards
+            document.querySelectorAll('.pf-amount-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Update calculation preview
+            document.getElementById('txt-usd').innerText = amt.toFixed(2) + " USD";
+            document.getElementById('txt-htg').innerText = (amt * exchangeRate).toLocaleString() + " HTG";
+            
+            // Show form section
+            document.getElementById('section-form').classList.remove('pf-hidden');
+            
+            // Scroll
+            window.scrollTo({ top: 700, behavior: 'smooth' });
+        };
+
+        window.submitToPayment = () => {
+            const userInfo = document.getElementById('user-info').value;
+            
+            if (!userInfo) {
+                alert("Veuillez entrer les coordonnées de votre compte.");
+                return;
+            }
+
+            // Préparation des données pour payment.html
+            const orderData = {
+                serviceType: 'Finance',
+                serviceName: selectedService,
+                amountUSD: selectedAmountUSD,
+                totalHTG: selectedAmountUSD * exchangeRate,
+                userIdentifier: userInfo,
+                timestamp: Date.now()
+            };
+
+            // Stockage temporaire en session avant le paiement final
+            sessionStorage.setItem('currentOrder', JSON.stringify(orderData));
+            window.location.href = 'payment.html';
+        };
+
+    </script>
+</body>
+</html>

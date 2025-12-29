@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Connexion - PAY FUSION</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-v-light: #dbeafe;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --font-main: 'Inter', sans-serif;
+            --text-normal: 0.875rem;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-main);
+            font-size: var(--text-normal);
+            color: var(--gray-dark);
+            background-color: var(--gray-v-light);
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .pf-auth-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--gray-light);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .pf-auth-header { text-align: center; margin-bottom: 2.5rem; }
+        .pf-auth-header h1 { font-size: 1.5rem; font-weight: 800; color: var(--blue-prof); text-transform: uppercase; letter-spacing: 1px; }
+        .pf-auth-header p { opacity: 0.6; margin-top: 0.5rem; }
+
+        .pf-form-group { margin-bottom: 1.5rem; }
+        .pf-label { display: block; font-weight: 700; font-size: 0.75rem; color: var(--gray-dark); margin-bottom: 0.5rem; text-transform: uppercase; }
+        
+        .pf-input-wrapper { position: relative; }
+        .pf-input-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--blue-prof); opacity: 0.7; }
+
+        .pf-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .pf-input:focus { border-color: var(--blue-prof); }
+
+        .pf-btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--blue-prof);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .pf-btn-submit:disabled { background: var(--gray-light); cursor: not-allowed; }
+
+        .pf-error-box {
+            background: #fef2f2;
+            color: var(--error);
+            padding: 0.875rem;
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        .pf-footer-links { text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-light); }
+        .pf-link { color: var(--blue-prof); text-decoration: none; font-weight: 700; }
+
+        .pf-ascii { font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <div class="pf-auth-card">
+        <div class="pf-auth-header">
+            <h1>PAY FUSION</h1>
+            <p>Espace de connexion sécurisé</p>
+        </div>
+
+        <div id="error-msg" class="pf-error-box"></div>
+
+        <form id="login-form">
+            <div class="pf-form-group">
+                <label class="pf-label">Adresse Email</label>
+                <div class="pf-input-wrapper">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="email" class="pf-input" placeholder="nom@exemple.com" required>
+                </div>
+            </div>
+
+            <div class="pf-form-group">
+                <label class="pf-label">Mot de passe</label>
+                <div class="pf-input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" class="pf-input" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" class="pf-btn-submit" id="btn-submit">
+                SE CONNECTER <span class="pf-ascii">—></span>
+            </button>
+        </form>
+
+        <div class="pf-footer-links">
+            Pas encore de compte ? <br>
+            <a href="register.html" class="pf-link">CRÉER UN COMPTE <span class="pf-ascii">+</span></a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const loginForm = document.getElementById('login-form');
+        const btnSubmit = document.getElementById('btn-submit');
+        const errorMsg = document.getElementById('error-msg');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "VERIFICATION...";
+            errorMsg.style.display = 'none';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // LOGIQUE ADMIN SPECIFIQUE
+                if (user.email === 'bmarcco4412@gmail.com') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'home.html';
+                }
+
+            } catch (error) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = 'SE CONNECTER <span class="pf-ascii">—></span>';
+                errorMsg.style.display = 'block';
+                
+                if (error.code === 'auth/invalid-credential') {
+                    errorMsg.innerText = "✗ Email ou mot de passe incorrect.";
+                } else {
+                    errorMsg.innerText = "✗ Une erreur est survenue lors de la connexion.";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

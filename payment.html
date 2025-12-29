@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paiement - PAY FUSION</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- PALETTE PROFESSIONNELLE --- */
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-v-light: #dbeafe;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --gaming: #f97316;
+            --streaming: #8b5cf6;
+        }
+
+        /* --- RESET & BASE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem; /* 14px */
+            color: var(--gray-dark);
+            background-color: var(--gray-v-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* --- HEADER --- */
+        header {
+            height: 70px;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo-center img {
+            height: 35px;
+        }
+
+        .pf-menu-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+        }
+
+        /* --- SECTIONS --- */
+        .pf-section {
+            background: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 16px;
+            padding: 1.5rem; /* 24px */
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1rem; /* 16px */
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--blue-prof);
+        }
+
+        /* --- ORDER SUMMARY --- */
+        .summary-box {
+            background: var(--gray-v-light);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px dashed var(--gray-light);
+            margin-bottom: 1rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-pay {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--blue-prof);
+            border-top: 1px solid var(--gray-light);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- METHOD CARDS --- */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .method-card {
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .method-card:hover {
+            border-color: var(--blue-light);
+        }
+
+        .method-card.active {
+            border-color: var(--blue-prof);
+            background: var(--blue-v-light);
+        }
+
+        .method-card img {
+            height: 30px;
+            object-fit: contain;
+            margin-bottom: 8px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .method-card span {
+            font-weight: 700;
+            font-size: 0.7rem;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        /* --- INFO BOX --- */
+        .info-box {
+            background: #fff7ed; /* Orange très clair */
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .info-box.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .info-box h4 {
+            color: #9a3412;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .copy-hint {
+            font-size: 0.7rem;
+            color: var(--blue-prof);
+            font-weight: 700;
+        }
+
+        /* --- FORM --- */
+        .payment-form {
+            display: none;
+        }
+
+        .payment-form.show {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 8px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            border-color: var(--blue-prof);
+        }
+
+        .file-upload-zone {
+            border: 2px dashed var(--gray-light);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .file-upload-zone:hover {
+            border-color: var(--blue-prof);
+            background: var(--gray-v-light);
+        }
+
+        .file-upload-zone input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* --- BUTTONS --- */
+        .btn-validate {
+            width: 100%;
+            padding: 1rem;
+            background: var(--blue-prof);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 2rem;
+        }
+
+        .btn-validate:disabled {
+            background: var(--gray-light);
+            cursor: not-allowed;
+        }
+
+        /* --- UTILS --- */
+        .ascii { font-family: monospace; font-weight: bold; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="javascript:history.back()" style="color: var(--gray-dark); font-weight: 600; text-decoration: none;">
+            <span class="ascii"><</span> Retour
+        </a>
+        <div class="logo-center">
+            <img src="assets/logos/placeholder.png" alt="PAY FUSION">
+        </div>
+        <div class="pf-menu-btn">
+            <span class="ascii">---</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Résumé Commande -->
+        <div class="pf-section">
+            <h2 class="section-title"><span class="ascii">●</span> Détails de l'achat</h2>
+            <div class="summary-box" id="order-recap">
+                <!-- Rempli par JS -->
+                <p style="text-align: center; opacity: 0.5;">Récupération des données...</p>
+            </div>
+        </div>
+
+        <!-- Sélection Méthode -->
+        <div class="pf-section">
+            <h2 class="section-title"><span class="ascii">●</span> Choisir un moyen de paiement</h2>
+            <div class="method-grid">
+                <div class="method-card" id="m-moncash" onclick="selectMethod('moncash')">
+                    <img src="assets/logos/moncash-logo.png" alt="MonCash" onerror="this.src='assets/logos/placeholder.png'">
+                    <span>MONCASH</span>
+                </div>
+                <div class="method-card" id="m-natcash" onclick="selectMethod('natcash')">
+                    <img src="assets/logos/natcash-logo.png" alt="NatCash" onerror="this.src='assets/logos/placeholder.png'">
+                    <span>NATCASH</span>
+                </div>
+                <div class="method-card" id="m-usdt" onclick="selectMethod('usdt')">
+                    <img src="assets/logos/usdt-logo.png" alt="USDT" onerror="this.src='assets/logos/placeholder.png'">
+                    <span>USDT</span>
+                </div>
+            </div>
+
+            <!-- Coordonnées destinataire (Marco Bien-Aimé) -->
+            <div class="info-box" id="info-box">
+                <h4 id="info-title">COORDONNÉES DE PAIEMENT</h4>
+                <div id="info-content">
+                    <!-- Rempli par JS -->
+                </div>
+                <p style="font-size: 0.7rem; margin-top: 1rem; opacity: 0.6;">
+                    <span class="ascii">●</span> Veuillez envoyer le montant exact pour accélérer le traitement.
+                </p>
+            </div>
+
+            <!-- Formulaire de preuve -->
+            <form class="payment-form" id="payment-form">
+                <div class="form-group">
+                    <label id="label-sender">Votre Nom Complet</label>
+                    <input type="text" id="sender-name" class="form-control" placeholder="Nom utilisé pour l'envoi" required>
+                </div>
+                <div class="form-group">
+                    <label id="label-phone">Votre Numéro ou Wallet</label>
+                    <input type="text" id="sender-phone" class="form-control" placeholder="Numéro qui a envoyé l'argent" required>
+                </div>
+                <div class="form-group">
+                    <label>Montant Envoyé (HTG)</label>
+                    <input type="number" id="sent-amount" class="form-control" placeholder="Ex: 1500" required>
+                </div>
+                <div class="form-group">
+                    <label>Preuve de paiement (Image)</label>
+                    <div class="file-upload-zone">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.5rem; color: var(--blue-prof); margin-bottom: 0.5rem;"></i>
+                        <p id="file-status">Cliquez pour ajouter une capture (Max 5Mo)</p>
+                        <input type="file" id="proof-image" accept="image/*" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-validate" id="btn-submit">
+                    VALIDER MA COMMANDE <span class="ascii">✓</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Configuration Firebase réelle
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let selectedMethod = '';
+        let currentOrder = JSON.parse(sessionStorage.getItem('currentOrder'));
+
+        // --- AUTH & DATA ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        if (!currentOrder) {
+            window.location.href = 'home.html';
+        } else {
+            const recap = document.getElementById('order-recap');
+            recap.innerHTML = `
+                <div class="summary-row"><span>Produit:</span> <strong>${currentOrder.serviceName}</strong></div>
+                <div class="summary-row"><span>Options:</span> <span>${currentOrder.details || currentOrder.userIdentifier}</span></div>
+                <div class="total-pay"><span>Total HTG:</span> <span>${currentOrder.totalHTG.toLocaleString()} HTG</span></div>
+            `;
+        }
+
+        // --- SELECTION METHODE ---
+        window.selectMethod = function(method) {
+            selectedMethod = method;
+            document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(`m-${method}`).classList.add('active');
+            
+            const infoBox = document.getElementById('info-box');
+            const infoContent = document.getElementById('info-content');
+            const form = document.getElementById('payment-form');
+            
+            infoBox.classList.add('show');
+            form.classList.add('show');
+
+            if (method === 'moncash') {
+                infoContent.innerHTML = `
+                    <div class="info-line"><span>Numéro :</span> <strong>+50939442808</strong></div>
+                    <div class="info-line"><span>Nom :</span> <strong>Marco Bien-Aimé</strong></div>
+                    <div class="info-line"><span>Minimum :</span> <strong>150 HTG</strong></div>
+                    <div class="info-line"><span>Délai :</span> <strong>10-30 minutes</strong></div>
+                `;
+            } else if (method === 'natcash') {
+                infoContent.innerHTML = `
+                    <div class="info-line"><span>Numéro :</span> <strong>+50935741778</strong></div>
+                    <div class="info-line"><span>Nom :</span> <strong>Marco Bien-Aimé</strong></div>
+                    <div class="info-line"><span>Minimum :</span> <strong>150 HTG</strong></div>
+                    <div class="info-line"><span>Délai :</span> <strong>10-30 minutes</strong></div>
+                `;
+            } else if (method === 'usdt') {
+                infoContent.innerHTML = `
+                    <div class="info-line"><span>Réseau :</span> <strong>TRON (TRC20)</strong></div>
+                    <div class="info-line"><span style="font-size:0.6rem">Adresse :</span> <strong style="font-size:0.5rem">TJHVCbXMBQdtzurHngB1aXSFkR9TWYvZ94</strong></div>
+                    <div class="info-line"><span>Taux :</span> <strong>1 USD = 150 HTG</strong></div>
+                    <div class="info-line"><span>Confirmation :</span> <strong>Blockchain</strong></div>
+                `;
+            }
+            window.scrollTo({ top: 500, behavior: 'smooth' });
+        };
+
+        // Gestion Fichier
+        const fileInput = document.getElementById('proof-image');
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                document.getElementById('file-status').innerText = "✓ " + e.target.files[0].name;
+            }
+        });
+
+        // --- VALIDATION FINALE ---
+        document.getElementById('payment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('btn-submit');
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = "ENVOI DE LA COMMANDE EN COURS...";
+
+            try {
+                // Conversion de l'image en Base64 pour le stockage direct dans Firestore (simplifié)
+                const reader = new FileReader();
+                reader.readAsDataURL(fileInput.files[0]);
+                
+                reader.onload = async () => {
+                    const base64Image = reader.result;
+
+                    const finalOrderData = {
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        ...currentOrder,
+                        paymentMethod: selectedMethod,
+                        senderName: document.getElementById('sender-name').value,
+                        senderPhone: document.getElementById('sender-phone').value,
+                        sentAmount: document.getElementById('sent-amount').value,
+                        proofImage: base64Image,
+                        status: 'pending',
+                        createdAt: serverTimestamp()
+                    };
+
+                    // Envoi vers la collection "orders" (visible par l'admin)
+                    await addDoc(collection(db, "orders"), finalOrderData);
+
+                    alert("✓ Succès ! Votre commande a été envoyée. Marco Bien-Aimé va la valider sous peu.");
+                    sessionStorage.removeItem('currentOrder');
+                    window.location.href = 'home.html';
+                };
+
+            } catch (error) {
+                console.error(error);
+                alert("✗ Erreur lors de l'envoi. Veuillez réessayer.");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'VALIDER MA COMMANDE <span class="ascii">✓</span>';
+            }
+        });
+
+    </script>
+</body>
+</html>

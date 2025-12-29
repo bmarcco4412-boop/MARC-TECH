@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Centre de Notifications - PAY FUSION</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --blue-prof: #2563eb;
+            --blue-light: #3b82f6;
+            --blue-very-light: #dbeafe;
+            --white: #ffffff;
+            --gray-v-light: #f8fafc;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        /* --- BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: var(--font-main);
+            font-size: 0.875rem; /* 14px */
+            color: var(--gray-dark);
+            background-color: var(--gray-v-light);
+            line-height: 1.6;
+        }
+
+        /* --- LAYOUT --- */
+        .pf-dashboard { display: flex; min-height: 100vh; }
+
+        /* --- SIDEBAR --- */
+        .pf-sidebar {
+            width: 280px; background: var(--white); border-right: 1px solid var(--gray-light);
+            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .pf-sidebar-header { padding: 2rem 1.5rem; border-bottom: 1px solid var(--gray-light); }
+        .pf-brand { font-size: 1.25rem; font-weight: 800; color: var(--blue-prof); margin-bottom: 1.5rem; display: block; }
+        .pf-sidebar-content { flex: 1; padding: 1.5rem; overflow-y: auto; }
+        .pf-nav-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-dark); opacity: 0.5; margin-bottom: 1rem; display: block; }
+        
+        .pf-nav-item {
+            display: flex; align-items: center; padding: 0.75rem 0; color: var(--gray-dark);
+            text-decoration: none; font-weight: 500; cursor: pointer; transition: all 0.2s;
+        }
+        .pf-nav-item:hover { color: var(--blue-prof); }
+        .pf-nav-item.active { color: var(--blue-prof); font-weight: 700; }
+        .pf-checkbox-design {
+            width: 18px; height: 18px; border: 2px solid var(--gray-dark); border-radius: 4px;
+            margin-right: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 900;
+        }
+        .pf-nav-item.active .pf-checkbox-design { background: var(--blue-prof); border-color: var(--blue-prof); color: var(--white); }
+
+        /* --- MAIN CONTENT --- */
+        .pf-main { flex: 1; margin-left: 280px; padding: 2rem; width: 100%; }
+        .pf-section-title { font-size: 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+
+        /* --- NOTIFICATION LIST --- */
+        .notif-container { display: flex; flex-direction: column; gap: 1rem; }
+        
+        .notif-card {
+            background: var(--white); border: 1px solid var(--gray-light); border-radius: 12px;
+            padding: 1.25rem; display: flex; gap: 1rem; position: relative;
+            transition: transform 0.2s; cursor: pointer;
+        }
+        .notif-card:hover { transform: scale(1.01); border-color: var(--blue-light); }
+        .notif-card.unread { border-left: 4px solid var(--blue-prof); background: #f0f7ff; }
+
+        .notif-icon {
+            width: 40px; height: 40px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .icon-success { background: #d1fae5; color: var(--success); }
+        .icon-info { background: #dbeafe; color: var(--blue-prof); }
+        .icon-warning { background: #fef3c7; color: var(--warning); }
+
+        .notif-content { flex: 1; }
+        .notif-header { display: flex; justify-content: space-between; margin-bottom: 0.25rem; }
+        .notif-title { font-weight: 700; color: var(--gray-dark); font-size: 0.95rem; }
+        .notif-time { font-size: 0.75rem; opacity: 0.5; }
+        .notif-message { font-size: 0.85rem; opacity: 0.8; line-height: 1.4; }
+
+        .unread-dot {
+            width: 8px; height: 8px; background: var(--blue-prof); border-radius: 50%;
+            display: inline-block; margin-left: 5px;
+        }
+
+        /* --- ACTIONS --- */
+        .action-bar { margin-bottom: 2rem; display: flex; justify-content: flex-end; }
+        .btn-clear {
+            background: none; border: 1px solid var(--gray-light); color: var(--gray-dark);
+            padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-clear:hover { background: var(--gray-v-light); border-color: var(--gray-dark); }
+
+        /* --- MOBILE --- */
+        .menu-trigger {
+            position: fixed; top: 1rem; right: 1rem; z-index: 1001;
+            background: var(--white); border: 1px solid var(--gray-light);
+            padding: 10px; border-radius: 8px; display: none; cursor: pointer;
+        }
+
+        @media (max-width: 992px) {
+            .pf-sidebar { transform: translateX(-100%); }
+            .pf-sidebar.show { transform: translateX(0); }
+            .pf-main { margin-left: 0; padding: 1.5rem; padding-top: 4rem; }
+            .menu-trigger { display: block; }
+        }
+
+        .ascii { font-family: monospace; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-trigger" id="pf-menu-toggle">
+        <span class="ascii">---</span>
+    </div>
+
+    <div class="pf-dashboard">
+        <!-- Sidebar -->
+        <aside class="pf-sidebar" id="pf-sidebar">
+            <div class="pf-sidebar-header">
+                <span class="pf-brand">PAY FUSION</span>
+            </div>
+            <div class="pf-sidebar-content">
+                <div class="pf-nav-section">
+                    <span class="pf-nav-label">Navigation</span>
+                    <a href="home.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Accueil
+                    </a>
+                    <a href="notifications.html" class="pf-nav-item active">
+                        <div class="pf-checkbox-design"><span class="ascii">✓</span></div> Notifications
+                    </a>
+                    <a href="commande.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Commandes
+                    </a>
+                    <a href="account.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Mon Profil
+                    </a>
+                </div>
+                <div class="pf-nav-section">
+                    <span class="pf-nav-label">Services</span>
+                    <a href="services.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Finance
+                    </a>
+                    <a href="freefire.html" class="pf-nav-item">
+                        <div class="pf-checkbox-design"> </div> Gaming
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="pf-main">
+            <h2 class="pf-section-title"><span class="ascii">●</span> Centre de Notifications</h2>
+
+            <div class="action-bar">
+                <button class="btn-clear" onclick="markAllRead()">Tout marquer comme lu <span class="ascii">✓</span></button>
+            </div>
+
+            <div class="notif-container" id="notif-list">
+                <!-- Rempli par Firebase -->
+                <div style="text-align: center; padding: 4rem; opacity: 0.5;">
+                    Chargement de vos messages...
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, orderBy, onSnapshot, doc, updateDoc, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5_KighCQRfslRjZtGZPxs3OUqqQRk7IE",
+            authDomain: "pay-fusion-26a79.firebaseapp.com",
+            projectId: "pay-fusion-26a79",
+            storageBucket: "pay-fusion-26a79.firebasestorage.app",
+            messagingSenderId: "771406909196",
+            appId: "1:771406909196:web:27bdf4db07ad8d08418329"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
+        // --- AUTH & DATA ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                listenToNotifications(user.uid);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        function listenToNotifications(uid) {
+            const q = query(
+                collection(db, "notifications"),
+                where("userId", "==", uid),
+                orderBy("createdAt", "desc")
+            );
+
+            onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('notif-list');
+                
+                if (snapshot.empty) {
+                    list.innerHTML = `
+                        <div style="text-align: center; padding: 4rem; opacity: 0.5;">
+                            <i class="fa-solid fa-bell-slash" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                            <p>Aucune notification pour le moment.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const n = docSnap.data();
+                    const date = n.createdAt ? new Date(n.createdAt.seconds * 1000).toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }) : '...';
+                    const isUnread = n.read === false;
+                    
+                    html += `
+                        <div class="notif-card ${isUnread ? 'unread' : ''}" onclick="markAsRead('${docSnap.id}')">
+                            <div class="notif-icon ${getIconClass(n.type)}">
+                                ${getIcon(n.type)}
+                            </div>
+                            <div class="notif-content">
+                                <div class="notif-header">
+                                    <span class="notif-title">${n.title} ${isUnread ? '<span class="unread-dot"></span>' : ''}</span>
+                                    <span class="notif-time">${date}</span>
+                                </div>
+                                <p class="notif-message">${n.message}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            });
+        }
+
+        function getIconClass(type) {
+            if (type === 'success') return 'icon-success';
+            if (type === 'warning') return 'icon-warning';
+            return 'icon-info';
+        }
+
+        function getIcon(type) {
+            if (type === 'success') return '<i class="fa-solid fa-check-circle"></i>';
+            if (type === 'warning') return '<i class="fa-solid fa-triangle-exclamation"></i>';
+            return '<i class="fa-solid fa-circle-info"></i>';
+        }
+
+        // --- ACTIONS ---
+        window.markAsRead = async function(id) {
+            const notifRef = doc(db, "notifications", id);
+            await updateDoc(notifRef, { read: true });
+        };
+
+        window.markAllRead = async function() {
+            if (!currentUser) return;
+            const q = query(collection(db, "notifications"), where("userId", "==", currentUser.uid), where("read", "==", false));
+            const querySnapshot = await getDocs(q);
+            
+            const batch = writeBatch(db);
+            querySnapshot.forEach((doc) => {
+                batch.update(doc.ref, { read: true });
+            });
+            await batch.commit();
+        };
+
+        // --- UI LOGIC ---
+        const toggle = document.getElementById('pf-menu-toggle');
+        const sidebar = document.getElementById('pf-sidebar');
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => sidebar.classList.remove('show'));
+
+    </script>
+</body>
+</html>
