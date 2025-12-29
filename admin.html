@@ -4,521 +4,225 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration Pro - PAY FUSION</title>
-    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
     <style>
         :root {
-            --blue-prof: #2563eb;
-            --blue-light: #3b82f6;
-            --blue-v-light: #dbeafe;
-            --white: #ffffff;
-            --gray-100: #f8fafc;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-700: #334155;
-            --gray-900: #0f172a;
-            --success: #10b981;
-            --error: #ef4444;
-            --warning: #f59e0b;
-            --font-main: 'Inter', system-ui, sans-serif;
+            --blue-prof: #2563eb; --blue-light: #3b82f6; --blue-v-light: #dbeafe;
+            --white: #ffffff; --gray-100: #f8fafc; --gray-200: #e2e8f0; --gray-700: #334155;
+            --success: #10b981; --error: #ef4444; --warning: #f59e0b;
         }
-
-        /* --- BASE --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--font-main);
-            font-size: 0.875rem;
-            color: var(--gray-700);
-            background-color: var(--gray-100);
-            display: none; /* Protection */
-        }
-
-        .pf-admin-container { display: flex; min-height: 100vh; }
-
-        /* --- SIDEBAR --- */
-        .pf-sidebar {
-            width: 260px;
-            background: var(--white);
-            border-right: 1px solid var(--gray-200);
-            position: fixed;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-        }
-
-        .pf-sidebar-brand {
-            padding: 2rem 1.5rem;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--blue-prof);
-            letter-spacing: -0.5px;
-            border-bottom: 1px solid var(--gray-100);
-        }
-
-        .pf-sidebar-nav { padding: 1.5rem 0; flex: 1; }
-        
-        .pf-nav-item {
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--gray-700);
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-            border-left: 3px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .pf-nav-item:hover { background: var(--gray-100); color: var(--blue-prof); }
-        .pf-nav-item.active {
-            background: var(--blue-v-light);
-            color: var(--blue-prof);
-            border-left-color: var(--blue-prof);
-            font-weight: 600;
-        }
-
-        .pf-sidebar-footer {
-            padding: 1.5rem;
-            border-top: 1px solid var(--gray-100);
-        }
-
-        /* --- MAIN CONTENT --- */
-        .pf-main { flex: 1; margin-left: 260px; padding: 2rem; }
-
-        .pf-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .pf-page-title h1 { font-size: 1.5rem; color: var(--gray-900); font-weight: 800; }
-        .pf-page-title p { font-size: 0.875rem; opacity: 0.6; }
-
-        /* --- STATS CARDS --- */
-        .pf-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .pf-stat-card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .pf-stat-card .label { font-size: 0.75rem; font-weight: 700; color: var(--gray-700); opacity: 0.5; text-transform: uppercase; }
-        .pf-stat-card .value { font-size: 1.5rem; font-weight: 800; color: var(--gray-900); margin-top: 0.5rem; }
-        .pf-stat-card .trend { font-size: 0.75rem; margin-top: 0.5rem; display: flex; align-items: center; gap: 4px; }
-        .pf-trend-up { color: var(--success); }
-
-        /* --- DATA TABLES --- */
-        .pf-content-box {
-            background: var(--white);
-            border-radius: 16px;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-
-        .pf-box-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pf-table { width: 100%; border-collapse: collapse; }
-        .pf-table th {
-            background: var(--gray-100);
-            padding: 0.75rem 1.5rem;
-            text-align: left;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--gray-700);
-            opacity: 0.6;
-        }
-
-        .pf-table td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--gray-100);
-            font-size: 0.875rem;
-        }
-
-        .pf-table tr:hover { background: var(--gray-100); }
-
-        /* --- BADGES --- */
-        .pf-badge {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .pf-badge-pending { background: #fff7ed; color: #9a3412; }
-        .pf-badge-completed { background: #f0fdf4; color: #166534; }
-        .pf-badge-cancelled { background: #fef2f2; color: #991b1b; }
-
-        /* --- BUTTONS --- */
-        .pf-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border: 1px solid var(--gray-200);
-            background: var(--white);
-            transition: all 0.2s;
-        }
-        .pf-btn-primary { background: var(--blue-prof); color: var(--white); border: none; }
-        .pf-btn-primary:hover { background: var(--blue-light); }
-
-        /* --- MODAL --- */
-        .pf-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(4px);
-            display: none; align-items: center; justify-content: center;
-            z-index: 2000;
-        }
-        .pf-modal-overlay.show { display: flex; }
-        .pf-modal {
-            background: var(--white);
-            width: 100%; max-width: 600px;
-            border-radius: 20px;
-            overflow: hidden;
-            animation: slideUp 0.3s ease;
-        }
-        .pf-modal-header { padding: 1.5rem; border-bottom: 1px solid var(--gray-100); display: flex; justify-content: space-between; }
-        .pf-modal-body { padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
-        .pf-proof-preview { width: 100%; border-radius: 12px; margin-top: 1rem; border: 1px solid var(--gray-200); }
-
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        body { font-family: 'Inter', sans-serif; font-size: 0.875rem; color: var(--gray-700); background-color: var(--gray-100); }
+        .pf-sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--gray-200); position: fixed; height: 100vh; z-index: 1000; }
+        .pf-brand { padding: 2rem 1.5rem; font-size: 1.25rem; font-weight: 800; color: var(--blue-prof); border-bottom: 1px solid var(--gray-100); }
+        .pf-nav-item { padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 12px; color: var(--gray-700); text-decoration: none; cursor: pointer; border-left: 3px solid transparent; }
+        .pf-nav-item.active { background: var(--blue-v-light); color: var(--blue-prof); border-left-color: var(--blue-prof); font-weight: 600; }
+        .pf-main { margin-left: 260px; padding: 2rem; }
+        .pf-stat-card { background: var(--white); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gray-200); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .pf-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+        .pf-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--gray-200); }
+        .pf-table th { background: var(--gray-100); padding: 1rem; text-align: left; font-size: 0.7rem; text-transform: uppercase; opacity: 0.6; }
+        .pf-table td { padding: 1rem; border-bottom: 1px solid var(--gray-100); }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .badge-pending { background: #fff7ed; color: #9a3412; }
+        .badge-completed { background: #f0fdf4; color: #166534; }
+        .pf-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .pf-modal { background: var(--white); width: 500px; border-radius: 16px; padding: 2rem; }
+        .pf-proof-img { width: 100%; border-radius: 8px; margin-top: 1rem; border: 1px solid var(--gray-200); }
+        .pf-btn { padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: var(--blue-prof); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-error { background: var(--error); color: white; }
         .pf-ascii { font-family: monospace; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="pf-admin-container">
-        <!-- SIDEBAR -->
-        <aside class="pf-sidebar">
-            <div class="pf-sidebar-brand">PAY FUSION</div>
-            <nav class="pf-sidebar-nav">
-                <div class="pf-nav-item active" onclick="switchSection('dashboard')">
-                    <i class="fa-solid fa-grid-2"></i> Vue d'ensemble
-                </div>
-                <div class="pf-nav-item" onclick="switchSection('orders')">
-                    <i class="fa-solid fa-cart-flatbed"></i> Commandes
-                </div>
-                <div class="pf-nav-item" onclick="switchSection('users')">
-                    <i class="fa-solid fa-user-group"></i> Utilisateurs
-                </div>
-                <div class="pf-nav-item" onclick="switchSection('config')">
-                    <i class="fa-solid fa-sliders"></i> Configuration
-                </div>
-            </nav>
-            <div class="pf-sidebar-footer">
-                <button class="pf-btn" style="width: 100%; color: var(--error);" onclick="adminLogout()">
-                    Déconnexion <span class="pf-ascii">✗</span>
-                </button>
-            </div>
-        </aside>
+<div class="pf-sidebar">
+    <div class="pf-brand">PAY FUSION ADMIN</div>
+    <div class="pf-nav-item active" onclick="switchSection('dashboard')">Vue d'ensemble</div>
+    <div class="pf-nav-item" onclick="switchSection('users')">Utilisateurs</div>
+</div>
 
-        <!-- MAIN -->
-        <main class="pf-main">
-            <!-- HEADER -->
-            <header class="pf-header">
-                <div class="pf-page-title">
-                    <h1 id="section-title">Tableau de Bord</h1>
-                    <p>Bienvenue, Administrateur Principal.</p>
-                </div>
-                <div class="pf-header-actions">
-                    <button class="pf-btn" onclick="location.reload()">Rafraîchir <span class="pf-ascii">○</span></button>
-                </div>
-            </header>
-
-            <!-- STATS -->
-            <div class="pf-stats-grid">
-                <div class="pf-stat-card">
-                    <div class="label">Ventes du jour</div>
-                    <div class="value" id="stat-revenue">0 HTG</div>
-                    <div class="trend pf-trend-up"><span class="pf-ascii">+</span> 12% ce jour</div>
-                </div>
-                <div class="pf-stat-card">
-                    <div class="label">Commandes en attente</div>
-                    <div class="value" id="stat-pending">0</div>
-                    <div class="trend" style="color:var(--warning)">Action requise</div>
-                </div>
-                <div class="pf-stat-card">
-                    <div class="label">Utilisateurs actifs</div>
-                    <div class="value" id="stat-users">0</div>
-                    <div class="trend pf-trend-up">En croissance</div>
-                </div>
-                <div class="pf-stat-card">
-                    <div class="label">Taux de conversion</div>
-                    <div class="value">94.2%</div>
-                    <div class="trend pf-trend-up">Excellent</div>
-                </div>
-            </div>
-
-            <!-- CONTENT SECTIONS -->
-            <div id="section-dashboard">
-                <div class="pf-content-box">
-                    <div class="pf-box-header">
-                        <h3 style="font-weight: 700;">Dernières Commandes <span class="pf-ascii">●</span></h3>
-                        <button class="pf-btn-primary pf-btn" onclick="switchSection('orders')">Voir tout</button>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table class="pf-table">
-                            <thead>
-                                <tr>
-                                    <th>ID Commande</th>
-                                    <th>Client</th>
-                                    <th>Service</th>
-                                    <th>Montant</th>
-                                    <th>Statut</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dashboard-orders-list">
-                                <!-- Rempli par JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="section-orders" style="display: none;">
-                <div class="pf-content-box">
-                    <div class="pf-box-header">
-                        <h3>Historique Global des Commandes</h3>
-                    </div>
-                    <table class="pf-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Client</th>
-                                <th>Service</th>
-                                <th>Détails</th>
-                                <th>Méthode</th>
-                                <th>Statut</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="full-orders-list"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="section-users" style="display: none;">
-                <div class="pf-content-box">
-                    <div class="pf-box-header">
-                        <h3>Base Utilisateurs</h3>
-                        <input type="text" placeholder="Rechercher email..." class="pf-btn" style="width: 250px;" onkeyup="filterUsers(this.value)">
-                    </div>
-                    <table class="pf-table">
-                        <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Email</th>
-                                <th>WhatsApp</th>
-                                <th>Solde Actuel</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-list-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- MODAL VÉRIFICATION -->
-    <div class="pf-modal-overlay" id="modal-overlay">
-        <div class="pf-modal">
-            <div class="pf-modal-header">
-                <h3 id="modal-title">Vérification de Paiement</h3>
-                <span class="pf-ascii" style="cursor:pointer" onclick="closeModal()">✗</span>
-            </div>
-            <div class="pf-modal-body">
-                <div id="modal-order-info" style="margin-bottom: 1.5rem; line-height: 1.8;">
-                    <!-- Injecté par JS -->
-                </div>
-                <div style="font-weight: 700; margin-bottom: 0.5rem;">Preuve de paiement :</div>
-                <img src="" id="proof-img-display" class="pf-proof-preview">
-                
-                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                    <button class="pf-btn pf-btn-primary" style="flex: 1; background: var(--success);" id="btn-approve">Approuver <span class="pf-ascii">✓</span></button>
-                    <button class="pf-btn" style="flex: 1; color: var(--error);" id="btn-reject">Rejeter <span class="pf-ascii">✗</span></button>
-                </div>
-            </div>
+<main class="pf-main">
+    <div class="pf-stats-grid">
+        <div class="pf-stat-card">
+            <div style="font-size: 0.75rem; font-weight: 700; opacity: 0.5;">COMMANDES EN ATTENTE</div>
+            <div style="font-size: 1.5rem; font-weight: 800;" id="stat-pending">0</div>
+        </div>
+        <div class="pf-stat-card">
+            <div style="font-size: 0.75rem; font-weight: 700; opacity: 0.5;">VOLUME VENTES JOUR</div>
+            <div style="font-size: 1.5rem; font-weight: 800;" id="stat-revenue">0 HTG</div>
+        </div>
+        <div class="pf-stat-card">
+            <div style="font-size: 0.75rem; font-weight: 700; opacity: 0.5;">TOTAL UTILISATEURS</div>
+            <div style="font-size: 1.5rem; font-weight: 800;" id="stat-users">0</div>
         </div>
     </div>
 
-    <!-- FIREBASE LOGIC -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <div id="section-dashboard">
+        <h3 style="margin-bottom: 1.5rem;">Gestion des Commandes</h3>
+        <table class="pf-table">
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Montant</th>
+                    <th>Statut</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="orders-list"></tbody>
+        </table>
+    </div>
 
-        const firebaseConfig = {
-  apiKey: "AIzaSyAasc7D2uajiC0NUdCsy6Aiy-PftWqlnYg",
-  authDomain: "pay-fusion-27319.firebaseapp.com",
-  projectId: "pay-fusion-27319",
-  storageBucket: "pay-fusion-27319.firebasestorage.app",
-  messagingSenderId: "428975862756",
-  appId: "1:428975862756:web:65e4117598257b1cae8df1"
-        };
+    <div id="section-users" style="display:none;">
+        <h3 style="margin-bottom: 1.5rem;">Base Clients</h3>
+        <table class="pf-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Solde HTG</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="users-list"></tbody>
+        </table>
+    </div>
+</main>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+<div class="pf-modal-overlay" id="modal-overlay">
+    <div class="pf-modal">
+        <h3 id="m-title">Détails de Validation</h3>
+        <div id="m-info" style="margin: 1rem 0; line-height: 1.6;"></div>
+        <img id="m-img" src="" class="pf-proof-img">
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button class="pf-btn btn-success" id="btn-confirm" style="flex: 1;">Approuver & Créditer</button>
+            <button class="pf-btn btn-error" id="btn-cancel" style="flex: 1;">Rejeter</button>
+            <button class="pf-btn" onclick="closeModal()" style="background:#eee">Fermer</button>
+        </div>
+    </div>
+</div>
 
-        const ADMIN_EMAIL = 'bmarcco4412@gmail.com';
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- AUTH CHECK ---
-        onAuthStateChanged(auth, (user) => {
-            if (user && user.email === ADMIN_EMAIL) {
-                document.body.style.display = 'block';
-                initAdminSystem();
-            } else {
-                window.location.href = 'login.html';
-            }
+    const firebaseConfig = {
+        apiKey: "AIzaSyAasc7D2uajiC0NUdCsy6Aiy-PftWqlnYg",
+        authDomain: "pay-fusion-27319.firebaseapp.com",
+        projectId: "pay-fusion-27319",
+        storageBucket: "pay-fusion-27319.firebasestorage.app",
+        messagingSenderId: "428975862756",
+        appId: "1:428975862756:web:65e4117598257b1cae8df1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user && user.email === 'bmarcco4412@gmail.com') {
+            loadAdminData();
+        } else {
+            window.location.href = 'login.html';
+        }
+    });
+
+    function loadAdminData() {
+        // Commandes
+        onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc")), (snap) => {
+            let html = ''; let pending = 0; let rev = 0;
+            snap.forEach(d => {
+                const o = d.data();
+                if(o.status === 'pending') pending++;
+                if(o.status === 'completed') rev += parseFloat(o.totalHTG || 0);
+                html += `<tr>
+                    <td><b>${o.senderName || 'Inconnu'}</b><br><small>${o.userEmail}</small></td>
+                    <td>${o.serviceName}</td>
+                    <td>${o.totalHTG} HTG</td>
+                    <td><span class="badge badge-${o.status}">${o.status}</span></td>
+                    <td><button class="pf-btn btn-primary" onclick="openModal('${d.id}')">Gérer</button></td>
+                </tr>`;
+            });
+            document.getElementById('orders-list').innerHTML = html;
+            document.getElementById('stat-pending').innerText = pending;
+            document.getElementById('stat-revenue').innerText = rev.toLocaleString() + " HTG";
         });
 
-        function initAdminSystem() {
-            // Stats & Commandes en temps réel
-            onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc")), (snapshot) => {
-                let pending = 0;
-                let revenue = 0;
-                let dashHtml = '';
-                let fullHtml = '';
-                const today = new Date().toDateString();
-
-                snapshot.forEach(docSnap => {
-                    const order = docSnap.data();
-                    const oid = docSnap.id;
-                    const date = order.createdAt ? new Date(order.createdAt.seconds * 1000) : new Date();
-
-                    if (order.status === 'pending') pending++;
-                    if (date.toDateString() === today && order.status === 'completed') revenue += parseFloat(order.totalHTG);
-
-                    const rowHtml = `
-                        <tr>
-                            <td><span style="font-family:monospace; font-size:0.7rem">#${oid.substring(0,8)}</span></td>
-                            <td><div style="font-weight:700">${order.senderName}</div><div style="font-size:0.7rem; opacity:0.5">${order.userEmail}</div></td>
-                            <td>${order.serviceName}</td>
-                            <td style="font-weight:800; color:var(--blue-prof)">${order.totalHTG} HTG</td>
-                            <td><span class="pf-badge pf-badge-${order.status}">${order.status}</span></td>
-                            <td><button class="pf-btn" onclick="openVerification('${oid}')">Gérer</button></td>
-                        </tr>
-                    `;
-
-                    fullHtml += `
-                        <tr>
-                            <td style="font-size:0.7rem">${date.toLocaleDateString()}</td>
-                            <td>${order.senderName}</td>
-                            <td>${order.serviceName}</td>
-                            <td style="font-size:0.75rem">${order.details || order.userIdentifier}</td>
-                            <td>${order.paymentMethod.toUpperCase()}</td>
-                            <td><span class="pf-badge pf-badge-${order.status}">${order.status}</span></td>
-                            <td><button class="pf-btn" onclick="openVerification('${oid}')">Détails</button></td>
-                        </tr>
-                    `;
-                    
-                    if(dashHtml.split('<tr>').length < 10) dashHtml += rowHtml;
-                });
-
-                document.getElementById('stat-pending').innerText = pending;
-                document.getElementById('stat-revenue').innerText = revenue.toLocaleString() + " HTG";
-                document.getElementById('dashboard-orders-list').innerHTML = dashHtml;
-                document.getElementById('full-orders-list').innerHTML = fullHtml;
+        // Utilisateurs
+        onSnapshot(collection(db, "users"), (snap) => {
+            let html = '';
+            snap.forEach(d => {
+                const u = d.data();
+                html += `<tr>
+                    <td>${u.displayName}</td>
+                    <td>${u.email}</td>
+                    <td style="font-weight:800; color:var(--blue-prof)">${(u.balance || 0).toLocaleString()} HTG</td>
+                    <td><button class="pf-btn" onclick="manualBalance('${d.id}')">Ajuster</button></td>
+                </tr>`;
             });
+            document.getElementById('users-list').innerHTML = html;
+            document.getElementById('stat-users').innerText = snap.size;
+        });
+    }
 
-            // Utilisateurs en temps réel
-            onSnapshot(collection(db, "users"), (snapshot) => {
-                let usersHtml = '';
-                snapshot.forEach(docSnap => {
-                    const user = docSnap.data();
-                    usersHtml += `
-                        <tr>
-                            <td><div style="font-weight:700">${user.displayName}</div></td>
-                            <td>${user.email}</td>
-                            <td>${user.phoneNumber}</td>
-                            <td style="font-weight:800; color:var(--blue-prof)">${(user.balance || 0).toLocaleString()} HTG</td>
-                            <td><button class="pf-btn" onclick="adjustUserBalance('${docSnap.id}', '${user.email}')">Modifier Solde</button></td>
-                        </tr>
-                    `;
+    window.openModal = async (id) => {
+        const d = await getDoc(doc(db, "orders", id));
+        const o = d.data();
+        document.getElementById('m-info').innerHTML = `
+            ● <b>Client :</b> ${o.userEmail}<br>
+            ● <b>Montant Déclaré :</b> ${o.sentAmount} HTG<br>
+            ● <b>Produit :</b> ${o.serviceName}<br>
+            ● <b>ID/Cible :</b> ${o.playerID || o.netflixEmail || o.userIdentifier || 'N/A'}
+        `;
+        document.getElementById('m-img').src = o.proofImage;
+        document.getElementById('modal-overlay').style.display = 'flex';
+
+        document.getElementById('btn-confirm').onclick = () => validateOrder(id, o);
+        document.getElementById('btn-cancel').onclick = () => updateStatus(id, 'cancelled');
+    };
+
+    async function validateOrder(orderId, orderData) {
+        try {
+            // 1. Update order status
+            await updateDoc(doc(db, "orders", orderId), { status: 'completed' });
+
+            // 2. Si c'est un dépôt ou service financier, créditer le solde
+            if (orderData.serviceType === 'Finance' || orderData.serviceType === 'Dépôt Direct' || orderData.serviceName === 'Recharge de Solde') {
+                const amountToAdd = parseFloat(orderData.sentAmount || orderData.totalHTG);
+                await updateDoc(doc(db, "users", orderData.userId), {
+                    balance: increment(amountToAdd)
                 });
-                document.getElementById('users-list-body').innerHTML = usersHtml;
-                document.getElementById('stat-users').innerText = snapshot.size;
-            });
-        }
-
-        // --- ACTIONS ---
-
-        window.openVerification = async (oid) => {
-            const orderRef = doc(db, "orders", oid);
-            const snap = await getDoc(orderRef);
-            if (!snap.exists()) return;
-            const order = snap.data();
-
-            document.getElementById('modal-order-info').innerHTML = `
-                <span class="pf-ascii">●</span> <strong>Client :</strong> ${order.senderName} (${order.senderPhone})<br>
-                <span class="pf-ascii">●</span> <strong>Service :</strong> ${order.serviceName}<br>
-                <span class="pf-ascii">●</span> <strong>Montant Payé :</strong> ${order.sentAmount} HTG<br>
-                <span class="pf-ascii">●</span> <strong>Cible :</strong> ${order.playerID || order.netflixEmail || order.userIdentifier}
-            `;
-            document.getElementById('proof-img-display').src = order.proofImage;
-            document.getElementById('modal-overlay').classList.add('show');
-
-            document.getElementById('btn-approve').onclick = () => updateOrderStatus(oid, 'completed');
-            document.getElementById('btn-reject').onclick = () => updateOrderStatus(oid, 'cancelled');
-        };
-
-        async function updateOrderStatus(oid, status) {
-            await updateDoc(doc(db, "orders", oid), { status: status });
-            closeModal();
-            alert("Commande mise à jour.");
-        }
-
-        window.adjustUserBalance = async (uid, email) => {
-            const amount = prompt(`Solde à AJOUTER (ex: 500) ou RETIRER (ex: -500) pour ${email} :`);
-            if (amount && !isNaN(amount)) {
-                await updateDoc(doc(db, "users", uid), {
-                    balance: increment(parseFloat(amount))
-                });
-                alert("Solde mis à jour.");
+                alert("✓ Commande validée et solde crédité !");
+            } else {
+                alert("✓ Commande marquée comme livrée !");
             }
-        };
+            closeModal();
+        } catch (e) { alert("Erreur lors de la validation"); }
+    }
 
-        window.switchSection = (id) => {
-            document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
-            document.getElementById(`section-${id}`).style.display = 'block';
-            document.querySelectorAll('.pf-nav-item').forEach(i => i.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            
-            const titles = { 'dashboard': 'Vue d\'ensemble', 'orders': 'Toutes les Commandes', 'users': 'Gestion Utilisateurs' };
-            document.getElementById('section-title').innerText = titles[id];
-        };
+    async function updateStatus(id, status) {
+        await updateDoc(doc(db, "orders", id), { status: status });
+        closeModal();
+    }
 
-        window.closeModal = () => document.getElementById('modal-overlay').classList.remove('show');
-        window.adminLogout = () => signOut(auth).then(() => window.location.href = 'login.html');
+    window.manualBalance = async (uid) => {
+        const val = prompt("Montant à AJOUTER (ex: 500) ou RETIRER (ex: -500) :");
+        if(val) await updateDoc(doc(db, "users", uid), { balance: increment(parseFloat(val)) });
+    };
 
-    </script>
+    window.closeModal = () => document.getElementById('modal-overlay').style.display = 'none';
+    window.switchSection = (s) => {
+        document.getElementById('section-dashboard').style.display = s === 'dashboard' ? 'block' : 'none';
+        document.getElementById('section-users').style.display = s === 'users' ? 'block' : 'none';
+        document.querySelectorAll('.pf-nav-item').forEach(i => i.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    };
+</script>
 </body>
 </html>
