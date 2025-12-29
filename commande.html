@@ -2,277 +2,139 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes Commandes - PAY FUSION</title>
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --blue-prof: #2563eb;
-            --blue-light: #3b82f6;
-            --blue-very-light: #dbeafe;
-            --white: #ffffff;
-            --gray-v-light: #f8fafc;
-            --gray-light: #e2e8f0;
-            --gray-dark: #334155;
-            --success: #10b981;
-            --error: #ef4444;
-            --warning: #f59e0b;
-            --font-main: 'Inter', sans-serif;
+            --blue-prof: #2563eb; --blue-light: #3b82f6; --white: #ffffff;
+            --gray-100: #f8fafc; --gray-200: #e2e8f0; --gray-700: #334155;
+            --success: #10b981; --error: #ef4444; --warning: #f59e0b;
         }
-
-        /* --- BASE --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: var(--font-main);
-            font-size: 0.875rem; /* 14px */
-            color: var(--gray-dark);
-            background-color: var(--gray-v-light);
-            line-height: 1.6;
-        }
-
-        /* --- LAYOUT --- */
-        .pf-dashboard { display: flex; min-height: 100vh; }
-
-        /* --- SIDEBAR --- */
-        .pf-sidebar {
-            width: 280px; background: var(--white); border-right: 1px solid var(--gray-light);
-            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-        .pf-sidebar-header { padding: 2rem 1.5rem; border-bottom: 1px solid var(--gray-light); }
-        .pf-brand { font-size: 1.25rem; font-weight: 800; color: var(--blue-prof); margin-bottom: 1.5rem; display: block; }
-        .pf-sidebar-content { flex: 1; padding: 1.5rem; overflow-y: auto; }
-        .pf-nav-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-dark); opacity: 0.5; margin-bottom: 1rem; display: block; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; font-size: 0.875rem; color: var(--gray-700); background-color: var(--gray-100); line-height: 1.6; }
         
-        .pf-nav-item {
-            display: flex; align-items: center; padding: 0.75rem 0; color: var(--gray-dark);
-            text-decoration: none; font-weight: 500; cursor: pointer; transition: all 0.2s;
-        }
-        .pf-nav-item:hover { color: var(--blue-prof); }
-        .pf-nav-item.active { color: var(--blue-prof); font-weight: 700; }
-        .pf-checkbox-design {
-            width: 18px; height: 18px; border: 2px solid var(--gray-dark); border-radius: 4px;
-            margin-right: 12px; display: flex; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: 900;
-        }
-        .pf-nav-item.active .pf-checkbox-design { background: var(--blue-prof); border-color: var(--blue-prof); color: var(--white); }
+        /* HEADER */
+        header { height: 70px; background: var(--white); border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: center; position: sticky; top: 0; z-index: 1000; }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); }
+        .logo-center img { height: 35px; }
+        .btn-back { position: absolute; left: 1.5rem; color: var(--gray-700); text-decoration: none; font-weight: 600; }
 
-        /* --- MAIN CONTENT --- */
-        .pf-main { flex: 1; margin-left: 280px; padding: 2rem; width: 100%; }
-        .pf-section-title { font-size: 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .pf-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 16px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        
+        .pf-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .pf-table th { text-align: left; padding: 1rem; font-size: 0.7rem; text-transform: uppercase; opacity: 0.5; border-bottom: 2px solid var(--gray-100); }
+        .pf-table td { padding: 1rem; border-bottom: 1px solid var(--gray-100); font-size: 0.85rem; }
 
-        /* --- ORDERS TABLE & CARDS --- */
-        .pf-card {
-            background: var(--white); border: 1px solid var(--gray-light); border-radius: 16px;
-            padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .badge-pending { background: #fff7ed; color: #9a3412; }
+        .badge-completed { background: #ecfdf5; color: #065f46; }
+        .badge-cancelled { background: #fef2f2; color: #991b1b; }
 
-        .table-container { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
-        th { padding: 1rem; border-bottom: 2px solid var(--gray-v-light); font-weight: 700; opacity: 0.6; font-size: 0.75rem; text-transform: uppercase; }
-        td { padding: 1.25rem 1rem; border-bottom: 1px solid var(--gray-v-light); font-size: 0.85rem; }
-
-        /* --- STATUS BADGES --- */
-        .badge {
-            padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700;
-            text-transform: uppercase; display: inline-block;
-        }
-        .badge-pending { background: #fff7ed; color: var(--warning); border: 1px solid #fed7aa; }
-        .badge-completed { background: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
-        .badge-cancelled { background: #fef2f2; color: var(--error); border: 1px solid #fecaca; }
-
-        /* --- EMPTY STATE --- */
-        .empty-state { text-align: center; padding: 4rem 2rem; }
-        .empty-icon { font-size: 3rem; color: var(--gray-light); margin-bottom: 1rem; display: block; }
-
-        /* --- MOBILE TRIGGER --- */
-        .menu-trigger {
-            position: fixed; top: 1rem; right: 1rem; z-index: 1001;
-            background: var(--white); border: 1px solid var(--gray-light);
-            padding: 10px; border-radius: 8px; display: none; cursor: pointer;
-        }
-
-        @media (max-width: 992px) {
-            .pf-sidebar { transform: translateX(-100%); }
-            .pf-sidebar.show { transform: translateX(0); }
-            .pf-main { margin-left: 0; padding: 1.5rem; padding-top: 4rem; }
-            .menu-trigger { display: block; }
-        }
-
-        .ascii { font-family: monospace; font-weight: bold; }
+        .empty-state { text-align: center; padding: 4rem 1rem; opacity: 0.5; }
+        .pf-ascii { font-family: monospace; }
     </style>
 </head>
 <body>
 
-    <div class="menu-trigger" id="pf-menu-toggle">
-        <span class="ascii">---</span>
+    <header>
+        <a href="home.html" class="btn-back"><span class="pf-ascii"><</span> Retour</a>
+        <div class="logo-center"><img src="assets/logos/placeholder.png" alt="PAY FUSION"></div>
+    </header>
+
+    <div class="container">
+        <h2 style="margin-bottom: 1.5rem;"><span class="pf-ascii">●</span> Historique de mes commandes</h2>
+        
+        <div class="pf-card">
+            <div style="overflow-x: auto;">
+                <table class="pf-table" id="table-orders" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-rows"></tbody>
+                </table>
+
+                <div id="empty-msg" class="empty-state">
+                    <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; margin-bottom: 1rem; display: block;"></i>
+                    Aucune commande trouvée.
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="pf-dashboard">
-        <!-- Sidebar -->
-        <aside class="pf-sidebar" id="pf-sidebar">
-            <div class="pf-sidebar-header">
-                <span class="pf-brand">PAY FUSION</span>
-            </div>
-            <div class="pf-sidebar-content">
-                <div class="pf-nav-section">
-                    <span class="pf-nav-label">Navigation</span>
-                    <a href="home.html" class="pf-nav-item">
-                        <div class="pf-checkbox-design"> </div> Accueil
-                    </a>
-                    <a href="commande.html" class="pf-nav-item active">
-                        <div class="pf-checkbox-design"><span class="ascii">✓</span></div> Mes Commandes
-                    </a>
-                    <a href="services.html" class="pf-nav-item">
-                        <div class="pf-checkbox-design"> </div> Services Financiers
-                    </a>
-                    <a href="freefire.html" class="pf-nav-item">
-                        <div class="pf-checkbox-design"> </div> Gaming
-                    </a>
-                    <a href="netflix.html" class="pf-nav-item">
-                        <div class="pf-checkbox-design"> </div> Streaming
-                    </a>
-                </div>
-                <div class="pf-nav-section">
-                    <span class="pf-nav-label">Compte</span>
-                    <a href="account.html" class="pf-nav-item">
-                        <div class="pf-checkbox-design"> </div> Profil
-                    </a>
-                    <a href="#" class="pf-nav-item" id="btn-logout" style="color: var(--error);">
-                        <div class="pf-checkbox-design"> </div> Déconnexion
-                    </a>
-                </div>
-            </div>
-        </aside>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        <!-- Main -->
-        <main class="pf-main">
-            <h2 class="pf-section-title"><span class="ascii">●</span> Historique des Commandes</h2>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAasc7D2uajiC0NUdCsy6Aiy-PftWqlnYg",
+        authDomain: "pay-fusion-27319.firebaseapp.com",
+        projectId: "pay-fusion-27319",
+        storageBucket: "pay-fusion-27319.firebasestorage.app",
+        messagingSenderId: "428975862756",
+        appId: "1:428975862756:web:65e4117598257b1cae8df1"
+    };
 
-            <div class="pf-card">
-                <div class="table-container" id="orders-container">
-                    <table id="orders-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Service</th>
-                                <th>Détails</th>
-                                <th>Montant</th>
-                                <th>Statut</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orders-body">
-                            <!-- Chargement initial -->
-                            <tr>
-                                <td colspan="5" style="text-align: center; padding: 3rem;">
-                                    Chargement de vos données...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
-    </div>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            fetchUserOrders(user.uid);
+        } else {
+            window.location.href = 'login.html';
+        }
+    });
 
-        const firebaseConfig = {
-  apiKey: "AIzaSyAasc7D2uajiC0NUdCsy6Aiy-PftWqlnYg",
-  authDomain: "pay-fusion-27319.firebaseapp.com",
-  projectId: "pay-fusion-27319",
-  storageBucket: "pay-fusion-27319.firebasestorage.app",
-  messagingSenderId: "428975862756",
-  appId: "1:428975862756:web:65e4117598257b1cae8df1"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    function fetchUserOrders(uid) {
+        // IMPORTANT: Firestore nécessite un INDEX pour orderBy("createdAt"). 
+        // Si le tableau reste vide, regarde la console (F12) pour cliquer sur le lien de création d'index.
+        const q = query(
+            collection(db, "orders"),
+            where("userId", "==", uid),
+            orderBy("createdAt", "desc")
+        );
 
-        // --- AUTH & DATA ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                listenToOrders(user.uid);
-            } else {
-                window.location.href = 'login.html';
+        onSnapshot(q, (snapshot) => {
+            const table = document.getElementById('table-orders');
+            const tbody = document.getElementById('order-rows');
+            const empty = document.getElementById('empty-msg');
+
+            if (snapshot.empty) {
+                table.style.display = 'none';
+                empty.style.display = 'block';
+                return;
             }
-        });
 
-        function listenToOrders(uid) {
-            const q = query(
-                collection(db, "orders"), 
-                where("userId", "==", uid),
-                orderBy("createdAt", "desc")
-            );
-
-            onSnapshot(q, (snapshot) => {
-                const tbody = document.getElementById('orders-body');
-                
-                if (snapshot.empty) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="empty-state">
-                                <span class="empty-icon"><span class="ascii">○</span></span>
-                                <p>Vous n'avez pas encore passé de commande.</p>
-                                <a href="services.html" style="color: var(--blue-prof); font-weight: 700;">Commencer un achat</a>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                let html = '';
-                snapshot.forEach(doc => {
-                    const order = doc.data();
-                    const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR') : '...';
-                    const serviceIcon = getServiceIcon(order.serviceType);
-                    
-                    html += `
-                        <tr>
-                            <td>${date}</td>
-                            <td><span style="font-weight: 700;">${serviceIcon} ${order.serviceName}</span></td>
-                            <td><span style="font-size: 0.75rem; opacity: 0.8;">${order.details || order.userIdentifier || '...'}</span></td>
-                            <td style="font-weight: 700; color: var(--blue-prof);">${order.totalHTG.toLocaleString()} HTG</td>
-                            <td><span class="badge badge-${order.status}">${order.status}</span></td>
-                        </tr>
-                    `;
-                });
-                tbody.innerHTML = html;
+            empty.style.display = 'none';
+            table.style.display = 'table';
+            
+            let html = '';
+            snapshot.forEach(d => {
+                const o = d.data();
+                const date = o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleDateString('fr-FR') : '---';
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td><span style="font-weight:700">${o.serviceName}</span><br><small>${o.details || o.userIdentifier || ''}</small></td>
+                        <td style="font-weight:800; color:var(--blue-prof)">${o.totalHTG.toLocaleString()} HTG</td>
+                        <td><span class="badge badge-${o.status}">${o.status}</span></td>
+                    </tr>
+                `;
             });
-        }
-
-        function getServiceIcon(type) {
-            if (type === 'Gaming') return '<span class="ascii">#</span>';
-            if (type === 'Streaming') return '<span class="ascii">*</span>';
-            return '<span class="ascii">$</span>';
-        }
-
-        // --- UI LOGIC ---
-        const toggle = document.getElementById('pf-menu-toggle');
-        const sidebar = document.getElementById('pf-sidebar');
-
-        toggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('show');
+            tbody.innerHTML = html;
         });
-
-        document.addEventListener('click', () => sidebar.classList.remove('show'));
-
-        document.getElementById('btn-logout').addEventListener('click', (e) => {
-            e.preventDefault();
-            signOut(auth).then(() => window.location.href = 'login.html');
-        });
-
-    </script>
+    }
+</script>
 </body>
 </html>
